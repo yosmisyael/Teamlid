@@ -14,7 +14,7 @@ class EmployeeController extends Controller
      */
     public function index(): View
     {
-        $title = 'Employee Management App';
+        $title = 'App Pegawai';
 
         $employees = Employee::query()->latest()->paginate(5);
 

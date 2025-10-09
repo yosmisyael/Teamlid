@@ -21,8 +21,8 @@
                             <span class="material-icons text-white text-2xl">business</span>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold text-gray-900">PENS Management System</h1>
-                            <p class="text-xs text-gray-500">TEKIK INFORMATIKA</p>
+                            <h1 class="text-xl font-bold text-gray-900">Employee Management System</h1>
+                            <p class="text-xs text-gray-500">Department of Informatics and Computer Engineering</p>
                         </div>
                     </div>
                     <div class="hidden md:flex items-center space-x-4">
@@ -96,11 +96,11 @@
                             <span class="material-icons text-white text-xl">business</span>
                         </div>
                         <div>
-                            <h3 class="font-bold text-gray-900">PENS</h3>
+                            <h3 class="font-bold text-gray-900">Employee</h3>
                             <p class="text-xs text-gray-500">Management System</p>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600">Politeknik Elektronika Negeri Surabaya - Electronic Engineering Polytechnic Institute of Surabaya</p>
+                    <p class="text-sm text-gray-600">Electronic Engineering Polytechnic Institute of Surabaya</p>
                 </div>
 
                 <!-- Quick Links -->
