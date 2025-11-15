@@ -1,6 +1,14 @@
 @import 'tailwindcss';
 
+@theme {
+    --color-primary: #176688;
+    --color-secondary: #27AAE2;
+    --color-tertiary: #93D5F1;
+}
+
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+

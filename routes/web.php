@@ -11,14 +11,3 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::delete('employees/{employee}/force', [EmployeeController::class, 'forceDelete'])->name('employees.forceDelete');
-
-Route::resource('employees', EmployeeController::class);
-
-Route::resource('departments', DepartmentController::class);
-
-Route::resource('positions', PositionController::class);
-
-Route::resource('salaries', SalaryController::class);
-
-Route::resource('attendances', AttendanceController::class);
