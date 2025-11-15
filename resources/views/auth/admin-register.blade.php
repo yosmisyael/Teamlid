@@ -1,16 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - Teamable</title>
-    @vite('resources/css/app.css')
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body class="font-sans antialiased text-gray-800 bg-gradient-to-br from-white via-sky-50 to-blue-100">
-
+@extends('master')
+@section('content')
 <div class="min-h-screen w-full flex flex-col items-center justify-center p-4 lg:p-8">
 
     <!-- Logo Title -->
@@ -147,6 +136,4 @@
     </p>
 
 </div>
-
-</body>
-</html>
+@endsection

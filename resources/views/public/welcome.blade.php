@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teamable - Transform Your Workforce Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    @vite('resources/css/app.css')
-</head>
-<body class="font-sans antialiased text-gray-800 bg-white">
+@extends('master')
 
+@section('content')
 <!-- Header Navigation -->
 <nav class="bg-white sticky top-0 z-50 shadow-sm">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,7 +29,7 @@
                     Log in
                 </a>
                 <a href="/register"
-                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-secondary hover:bg-secondary/90">
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90">
                     Sign Up Free
                 </a>
             </div>
@@ -520,6 +510,4 @@
         </p>
     </div>
 </footer>
-
-</body>
-</html>
+@endsection

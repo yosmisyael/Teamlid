@@ -9,7 +9,7 @@ use \App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('public.welcome');
 });
 
 Route::get('/register', [AdminController::class, 'register'])->name('admin.register');
