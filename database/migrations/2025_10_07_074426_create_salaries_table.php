@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('karyawan_id');
-            $table->string('bulan', 10);
-            $table->decimal('gaji_pokok', 10, 2);
-            $table->decimal('tunjangan', 10, 2)->default(0);
-            $table->decimal('potongan', 10, 2)->default(0);
-            $table->decimal('total_gaji', 10, 2);
+            $table->unsignedBigInteger('employee_id');
+            $table->string('month', 10);
+            $table->decimal('base_salary', 10, 2);
+            $table->decimal('allowance', 10, 2)->default(0);
+            $table->decimal('cut', 10, 2)->default(0);
+            $table->decimal('total_salary', 10, 2);
             $table->timestamps();
 
-            $table->foreign('karyawan_id')
+            $table->foreign('employee_id')
                 ->references('id')
                 ->on('employees')
                 ->onDelete('cascade');

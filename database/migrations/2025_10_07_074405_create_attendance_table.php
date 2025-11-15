@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('karyawan_id');
-            $table->date('tanggal');
-            $table->time('waktu_masuk')->nullable();
-            $table->time('waktu_keluar')->nullable();
-            $table->enum('status_absensi', ['hadir', 'izin', 'sakit', 'alpha']);
+            $table->unsignedBigInteger('employee_id');
+            $table->date('date');
+            $table->time('check_in_at')->nullable();
+            $table->time('check_out_at')->nullable();
+            $table->enum('status', ['attended', 'leave', 'sick leave', 'annual leave', 'absent', 'late', 'early exit']);
             $table->timestamps();
 
-            $table->foreign('karyawan_id')
+            $table->foreign('employee_id')
                 ->references('id')
                 ->on('employees')
                 ->onDelete('cascade');
