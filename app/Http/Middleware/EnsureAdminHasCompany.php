@@ -20,10 +20,18 @@ class EnsureAdminHasCompany
          * @var \App\Models\Admin $admin
          */
         $admin = Auth::guard('admins')->user();
+        $route = $request->route()->getName();
+
+        $hasCompany = $admin->hasCompany();
+
+        if (!$hasCompany && $route !== 'admin.onboarding') {
+            return redirect()->route('admin.onboarding');
+        }
 
         if ($admin->hasCompany() && $request->route()->getName() === 'admin.onboarding') {
             return redirect()->route('admin.dashboard');
         }
+
         return $next($request);
     }
 }

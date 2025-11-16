@@ -15,23 +15,23 @@ class Employee extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'nama_lengkap',
+        'name',
         'email',
-        'nomor_telepon',
-        'tanggal_lahir',
-        'alamat',
-        'tanggal_masuk',
+        'phone',
+        'birth_date',
+        'address',
+        'start_date',
         'status',
-        'departemen_id',
-        'jabatan_id',
+        'department_id',
+        'position_id',
     ];
 
     public function department(): BelongsTo {
-        return $this->belongsTo(Department::class, 'departemen_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function position(): BelongsTo {
-        return $this->belongsTo(Position::class, 'jabatan_id');
+        return $this->belongsTo(Position::class, 'position_id');
     }
 
     public function salaries(): HasMany {

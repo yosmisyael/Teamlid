@@ -13,11 +13,13 @@ Route::get('/', function () {
     return view('public.welcome');
 });
 
+// admin authentications
 Route::get('/register', [AdminController::class, 'register'])->name('admin.register');
 Route::post('/register', [AdminController::class, 'handleRegister']);
 Route::get('/login', [AdminController::class, 'login'])->name('admin.login');
 Route::post('/login', [AdminController::class, 'handleLogin']);
 
+// admin resources
 Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/onboarding', CompanyOnboarding::class)->name('admin.onboarding');

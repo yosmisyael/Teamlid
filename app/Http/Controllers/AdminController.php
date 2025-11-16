@@ -22,10 +22,8 @@ class AdminController
             'password_confirmation' => ['required', 'string', 'min:8', 'same:password'],
         ]);
 
-        var_dump('called');
-
         Admin::query()->create($validated);
-        var_dump('called 2');
+
         return redirect()->route('admin.login');
     }
 

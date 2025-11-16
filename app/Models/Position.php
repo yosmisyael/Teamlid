@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Position extends Model
 {
     protected $fillable = [
-        'nama_jabatan',
-        'gaji_pokok',
+        'title',
+        'base_salary',
     ];
 
     public function employees(): HasMany {
-        return $this->hasMany(Employee::class, 'jabatan_id');
+        return $this->hasMany(Employee::class, 'position_id');
     }
 }

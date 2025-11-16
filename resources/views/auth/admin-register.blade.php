@@ -13,7 +13,7 @@
         <h2 class="text-3xl font-bold text-primary text-center">Create Your Account</h2>
         <p class="text-gray-500 text-center text-sm mt-2 mb-8">Join Teamable and transform your HR operations</p>
 
-        <form action="/login" method="POST" class="space-y-5">
+        <form action="/register" method="POST" class="space-y-5">
             @csrf
 
             <!-- Full Name -->
