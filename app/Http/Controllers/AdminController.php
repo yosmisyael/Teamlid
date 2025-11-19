@@ -53,4 +53,9 @@ class AdminController
     public function dashboard(): View {
         return view('admin.dashboard');
     }
+
+    public function logout(): RedirectResponse {
+        Auth::guard('admins')->logout();
+        return redirect()->route('home');
+    }
 }

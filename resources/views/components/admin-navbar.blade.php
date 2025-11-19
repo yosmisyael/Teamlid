@@ -1,3 +1,7 @@
+@php
+    $currentSession = \Illuminate\Support\Facades\Auth::guard('admins')->getUser();
+@endphp
+
 <header class="h-20 bg-white drop-shadow-md flex items-center justify-between flex-shrink-0 px-6 rounded-lg">
     <div class="flex items-center">
         <!-- Mobile Menu Button (hidden on md+) -->
@@ -27,9 +31,9 @@
         <!-- Profile Dropdown -->
         <div class="relative">
             <button class="flex items-center space-x-2">
-                <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/93D5F1/176688?text=J"
-                     alt="John Admin">
-                <span class="hidden md:block font-medium text-gray-700">John Admin</span>
+                <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/93D5F1/176688?text={{\Illuminate\Support\Str::substr($currentSession->name, 0, 1)}}"
+                     alt="Admin Profile">
+                <span class="hidden md:block font-medium text-gray-700">{{ $currentSession->name }}</span>
                 <!-- Heroicon: chevron-down -->
                 <svg class="w-5 h-5 text-gray-500 hidden md:block" xmlns="http://www.w3.org/2000/svg"
                      viewBox="0 0 24 24" fill="currentColor">

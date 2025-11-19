@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('public.welcome');
-});
+})->name('home');
 
 // admin authentications
 Route::get('/register', [AdminController::class, 'register'])->name('admin.register');
@@ -39,4 +39,5 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
     Route::prefix('positions')->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('admin.positions');
     });
+    Route::delete('/logout', [AdminController::class, 'logout'])->name('admin.logout');
 });

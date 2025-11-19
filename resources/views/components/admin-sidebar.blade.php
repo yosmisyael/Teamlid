@@ -38,7 +38,7 @@
             Position
         </a>
     </nav>
-    <form action="/logout" method="POST" class="px-4 py-4 space-y-2">
+    <form action="{{ route('admin.logout') }}" method="POST" class="px-4 py-4 space-y-2">
         @csrf
         @method('DELETE')
         <button type="submit" class="button-danger w-full">

@@ -1,7 +1,7 @@
 <div class="p-4 flex justify-between items-center border-t border-gray-200">
     @if($paginator->hasPages())
     <div class="text-sm text-gray-600">
-        Showing <span class="font-medium">{{ $paginator->firstItem() }}</span>- <span class="font-medium">{{ $paginator->lastItem() }}</span> of <span
+        Showing <span class="font-medium">{{ $paginator->firstItem() }}</span> - <span class="font-medium">{{ $paginator->lastItem() }}</span> of <span
             class="font-medium">{{ $paginator->total() }}</span>
     </div>
 
