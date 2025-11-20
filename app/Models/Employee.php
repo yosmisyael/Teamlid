@@ -41,8 +41,8 @@ class Employee extends Model
         return $this->belongsTo(Job::class, 'job_id', 'id');
     }
 
-    public function salaries(): HasMany {
-        return $this->hasMany(Salary::class, 'karyawan_id');
+    public function salary(): HasOne {
+        return $this->hasMany(Salary::class, 'employee_id', 'id');
     }
 
     public function attendances(): HasMany {
