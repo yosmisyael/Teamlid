@@ -12,6 +12,7 @@ use \App\Livewire\JobManagement;
 use \App\Livewire\PositionManagement;
 use \App\Livewire\EmployeeManagement;
 use \App\Livewire\AttendanceManagement;
+use \App\Livewire\BankManagement;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,6 +34,7 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
     Route::get('/departments', DepartmentManagement::class)->name('admin.departments');
     Route::get('/employees', EmployeeManagement::class)->name('admin.employees');
     Route::get('/attendances', AttendanceManagement::class)->name('admin.attendances');
+    Route::get('/banks', BankManagement::class)->name('admin.banks');
 
     Route::prefix('payrolls')->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('admin.payrolls');

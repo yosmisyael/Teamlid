@@ -33,6 +33,10 @@
             <span class="material-icons text-xl">punch_clock</span>
             Attendance
         </a>
+        <a href="{{ route('admin.banks') }}" class="{{ request()->routeIs('admin.banks') ? 'sidebar-link-active' : 'sidebar-link' }}">
+            <span class="material-icons text-xl">account_balance</span>
+            Authorized Bank
+        </a>
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.payrolls.*') ? 'sidebar-link-active' : 'sidebar-link' }}">
             <span class="material-icons text-xl">payments</span>
             Payroll
