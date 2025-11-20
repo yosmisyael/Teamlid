@@ -186,7 +186,7 @@
         {{ $departments->links('components.pagination') }}
     </div>
 
-    {{--  Add Department Form  --}}
+    {{--  Department Form  --}}
     <section
         class="h-screen w-1/3 {{ $isFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-10 bg-surface-high rounded-lg shadow-lg">
         <div class="p-6">
@@ -208,9 +208,11 @@
                     <label for="manager" class="input-label">Department Manager</label>
                     <div class="relative mt-1 rounded-md shadow-sm">
                         <span class="material-icons text-xl text-primary input-icon">person</span>
-                        <select name="manager_id" id="manager_id" class="input-select">
-                            <option value="{{ null }}">Select department manager</option>
-
+                        <select wire:model.live="manager_id" id="manager_id" class="input-select">
+                            <option value="null">Select department manager</option>
+                            @foreach($managerCandidate as $candidate)
+                                <option value="{{ $candidate->id }}">{{ $candidate->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     @error('manager')

@@ -29,7 +29,7 @@ class Employee extends Model
     }
 
     public function managedDepartment(): HasOne {
-        return $this->hasOne(Department::class);
+        return $this->hasOne(Department::class, 'manager_id', 'id');
     }
 
     public function position(): BelongsTo {

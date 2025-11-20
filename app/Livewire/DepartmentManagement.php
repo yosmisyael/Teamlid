@@ -62,8 +62,7 @@ class DepartmentManagement extends Component
             'manager_id' => 'nullable|exists:employees,id',
         ]);
 
-
-        if (isset($validated['manager_id'])) {
+        if (isset($validated['manager_id']) && $validated['manager_id'] == '') {
             $validated['manager_id'] = null;
         }
 
@@ -115,6 +114,7 @@ class DepartmentManagement extends Component
             'departments' => Department::query()->with(['manager', 'employees'])->latest()->paginate(5),
             'totalDepartments' => Department::query()->count(),
             'totalEmployees' => Employee::query()->count(),
+            'managerCandidate' => Employee::query()->whereDoesntHave('managedDepartment')->get(),
             'averageEmployeesPerDepartment' => $avgEmployeesPerDepartment,
         ]);
     }
