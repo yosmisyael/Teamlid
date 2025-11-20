@@ -2,39 +2,39 @@
     <!-- Daily Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-1">
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <span class="material-icons text-xl text-blue-600">calendar_today</span>
+            <div class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center flex-shrink-0">
+                <span class="material-icons text-xl text-primary">calendar_today</span>
             </div>
             <div>
                 <p class="text-sm text-gray-500">Selected Date</p>
-                <span class="text-lg font-bold text-blue-600">{{ \Carbon\Carbon::parse($filterDate)->format('M d, Y') }}</span>
+                <span class="text-lg font-bold text-primary">{{ \Carbon\Carbon::parse($filterDate)->format('M d, Y') }}</span>
             </div>
         </div>
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <span class="material-icons text-xl text-green-600">check_circle</span>
+            <div class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center flex-shrink-0">
+                <span class="material-icons text-xl text-primary">check_circle</span>
             </div>
             <div>
                 <p class="text-sm text-gray-500">Present</p>
-                <span class="text-2xl font-bold text-green-600">{{ $dailyStats->present }}</span>
+                <span class="text-2xl font-bold text-primary">{{ $dailyStats->present }}</span>
             </div>
         </div>
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                <span class="material-icons text-xl text-yellow-600">schedule</span>
+            <div class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center flex-shrink-0">
+                <span class="material-icons text-xl text-primary">schedule</span>
             </div>
             <div>
                 <p class="text-sm text-gray-500">Late Arrivals</p>
-                <span class="text-2xl font-bold text-yellow-600">{{ $dailyStats->late }}</span>
+                <span class="text-2xl font-bold text-primary">{{ $dailyStats->late }}</span>
             </div>
         </div>
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center space-x-4">
-            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                <span class="material-icons text-xl text-red-600">cancel</span>
+            <div class="w-12 h-12 rounded-full bg-tertiary flex items-center justify-center flex-shrink-0">
+                <span class="material-icons text-xl text-primary">cancel</span>
             </div>
             <div>
                 <p class="text-sm text-gray-500">Absent</p>
-                <span class="text-2xl font-bold text-red-600">{{ $dailyStats->absent }}</span>
+                <span class="text-2xl font-bold text-primary">{{ $dailyStats->absent }}</span>
             </div>
         </div>
     </div>
@@ -62,7 +62,7 @@
             </div>
 
             <!-- Status Filter -->
-            <div class="relative flex gap-2">
+            <div class="relative flex gap-4 items-end">
                 <div class="flex-1">
                     <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
                     <select wire:model.live="filterStatus" class="bg-gray-50 rounded-md py-2 px-3 w-full border border-gray-200 focus:ring-secondary">
