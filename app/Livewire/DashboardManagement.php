@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Attendance;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Leave;
+use App\Models\Payroll;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +54,15 @@ class DashboardManagement extends Component
             $growthData[] = $data->count;
         }
 
+        $approval = Leave::query()
+            ->whereHas('employee', function ($q) use ($companyId) {
+                $q->whereHas('department', function ($subQ) use ($companyId) {
+                    $subQ->where('company_id', $companyId);
+                });
+            })
+            ->where('status', 'pending')
+            ->count();
+
         $attendanceCount = Attendance::query()
             ->whereHas('employee.department', function ($q) use ($companyId) {
                 $q->where('company_id', $companyId);
@@ -59,10 +70,20 @@ class DashboardManagement extends Component
             ->whereDate('date', today())
             ->count();
 
+        $currentMonth = now()->format('Y-m');
+        $monthlyPayrollCost = Payroll::query()
+            ->whereHas('employee.department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })
+            ->where('period_month', '<', $currentMonth)
+            ->sum(DB::raw('base_salary + allowance - cut - COALESCE(absence_deduction, 0)'));
+
+
         return view('livewire.dashboard-management', [
             'totalEmployee' => (clone $employeeQuery)->count(),
             'todayAttendance' => $attendanceCount,
-
+            'monthlyPayrollCost' => $monthlyPayrollCost,
+            'pendingLeaveCount' => $approval,
             'chartDeptLabels' => $deptLabels,
             'chartDeptData' => $deptData,
             'chartGrowthLabels' => $growthLabels,

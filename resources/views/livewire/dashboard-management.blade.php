@@ -1,4 +1,4 @@
-z<main class="flex-1 overflow-y-auto">
+<main class="flex-1 overflow-y-auto">
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <!-- Card 1: Total Employees -->
@@ -15,9 +15,9 @@ z<main class="flex-1 overflow-y-auto">
         <!-- Card 2: Active Recruitments -->
         <div class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
             <div>
-                <p class="text-sm font-medium text-gray-500 mb-1">Active Recruitments</p>
-                <span class="text-4xl font-bold text-primary">18</span>
-                <p class="text-sm text-secondary font-medium">9 new positions</p>
+                <p class="text-sm font-medium text-gray-500 mb-1">Monthly Salary Expense</p>
+                <span class="text-4xl font-bold text-primary">Rp{{ number_format($monthlyPayrollCost / 1000000, 1) }}M</span>
+                <p class="text-sm text-secondary font-medium">processed this month</p>
             </div>
             <div class="w-14 h-14 bg-tertiary rounded-full flex items-center justify-center">
                 <span class="text-6xl material-icons text-primary">person_search</span>
@@ -38,8 +38,8 @@ z<main class="flex-1 overflow-y-auto">
         <div class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
             <div>
                 <p class="text-sm font-medium text-gray-500 mb-1">Pending Approvals</p>
-                <span class="text-4xl font-bold text-primary">14</span>
-                <p class="text-sm text-gray-500 font-medium">7 leave requests</p>
+                <span class="text-4xl font-bold text-primary">{{ $pendingLeaveCount }}</span>
+                <p class="text-sm text-gray-500 font-medium">{{ $pendingLeaveCount }} leave requests</p>
             </div>
             <div class="w-14 h-14 bg-tertiary rounded-full flex items-center justify-center">
                 <span class="text-6xl material-icons text-primary">priority_high</span>
