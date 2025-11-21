@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'company.setup' => \App\Http\Middleware\EnsureAdminHasCompany::class,
             'admin.auth' => \App\Http\Middleware\AuthenticateAdmin::class,
+            'admin.redirect' => \App\Http\Middleware\RejectAuthenticatedAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
