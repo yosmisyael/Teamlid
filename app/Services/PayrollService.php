@@ -60,7 +60,8 @@ class PayrollService
 
                 $payroll->base_salary = $baseSalary;
                 $payroll->allowance = $allowance;
-                $payroll->cut = $cut + $deductions;
+                $payroll->cut = $cut;
+                $payroll->absence_deduction = $deductions;
 
                 $payroll->save();
 

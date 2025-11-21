@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('base_salary', 12, 2);
             $table->decimal('allowance', 12, 2);
             $table->decimal('cut', 12, 2);
+            $table->decimal('absence_deduction', 12, 2);
 
             $table->timestamps();
         });

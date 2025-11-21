@@ -13,7 +13,8 @@ class Payroll extends Model
         'payment_date',
         'base_salary',
         'allowance',
-        'cut'
+        'cut',
+        'absence_deduction',
     ];
 
     protected $casts = [
@@ -21,11 +22,12 @@ class Payroll extends Model
         'base_salary' => 'decimal:2',
         'allowance' => 'decimal:2',
         'cut' => 'decimal:2',
+        'absence_deduction' => 'decimal:2',
     ];
 
     public function calculateNetSalary(): float
     {
-        return $this->base_salary + $this->allowance - $this->cut;
+        return $this->base_salary + $this->allowance - $this->cut - $this->absence_deduction;
     }
 
     public function employee(): BelongsTo

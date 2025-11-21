@@ -81,6 +81,7 @@
                     <th class="p-4 text-left text-xs font-semibold text-gray-500 tracking-wider">Period / Date</th>
                     <th class="p-4 text-left text-xs font-semibold text-gray-500 tracking-wider">Base</th>
                     <th class="p-4 text-left text-xs font-semibold text-gray-500 tracking-wider">Allowance / Cut</th>
+                    <th class="p-4 text-left text-xs font-semibold text-gray-500 tracking-wider">Absence Deduction</th>
                     <th class="p-4 text-left text-xs font-semibold text-gray-500 tracking-wider">Net Paid</th>
                     <th class="p-4 text-left text-xs font-semibold text-gray-500 tracking-wider">Actions</th>
                 </tr>
@@ -102,6 +103,9 @@
                         <td class="p-4 whitespace-nowrap text-xs">
                             <div class="text-green-600">+ Rp{{ number_format($payroll->allowance, 2, decimal_separator: ',', thousands_separator: '.') }}</div>
                             <div class="text-red-500">- Rp{{ number_format($payroll->cut, 2, decimal_separator: ',', thousands_separator: '.') }}</div>
+                        </td>
+                        <td class="p-4 whitespace-nowrap text-sm text-red-500">
+                            Rp{{ number_format($payroll->absence_deduction, 2, decimal_separator: ',', thousands_separator: '.') }}
                         </td>
                         <td class="p-4 whitespace-nowrap">
                             <span class="px-2 py-1 rounded-md bg-green-50 text-green-700 text-sm font-bold border border-green-100">
