@@ -1,4 +1,4 @@
-<main class="flex-1 overflow-y-auto">
+z<main class="flex-1 overflow-y-auto">
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <!-- Card 1: Total Employees -->
@@ -27,7 +27,7 @@
         <div class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
             <div>
                 <p class="text-sm font-medium text-gray-500 mb-1">Today's Attendance</p>
-                <span class="text-4xl font-bold text-primary">{{ number_format($todayAttendance / $totalEmployee) }}%</span>
+                <span class="text-4xl font-bold text-primary">{{ number_format($todayAttendance / ($totalEmployee === 0 ? 1 : $totalEmployee) * 100) }}%</span>
                 <p class="text-sm text-gray-500 font-medium">{{ $todayAttendance }} present, {{ $totalEmployee - $todayAttendance }} absent</p>
             </div>
             <div class="w-14 h-14 bg-tertiary rounded-full flex items-center justify-center">
@@ -137,9 +137,9 @@
                 </a>
                 <a href="{{ route('admin.employees') }}" class="flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-tertiary/30 rounded-lg text-center">
                     <div class="w-12 h-12 bg-tertiary text-white rounded-lg flex items-center justify-center mb-2">
-                        <span class="material-icons h-7 w-7 text-primary">person_search</span>
+                        <span class="material-icons h-7 w-7 text-primary">done_all</span>
                     </div>
-                    <span class="text-sm font-medium text-primary">ATS</span>
+                    <span class="text-sm font-medium text-primary">Review Leave Request</span>
                 </a>
             </div>
         </div>

@@ -13,6 +13,10 @@
             <span class="material-icons text-xl">dashboard</span>
             Dashboard
         </a>
+        <a href="{{ route('admin.company') }}" class="{{ request()->routeIs('admin.company') ? 'sidebar-link-active' : 'sidebar-link' }}">
+            <span class="material-icons text-xl">info</span>
+            Company Profile
+        </a>
         <a href="{{ route('admin.departments') }}" class="{{ request()->routeIs('admin.departments') ? 'sidebar-link-active' : 'sidebar-link' }}">
             <span class="material-icons text-xl">domain</span>
             Department
@@ -30,8 +34,12 @@
             Employees
         </a>
         <a href="{{ route('admin.attendances') }}" class="{{ request()->routeIs('admin.attendances') ? 'sidebar-link-active' : 'sidebar-link' }}">
-            <span class="material-icons text-xl">punch_clock</span>
+            <span class="material-icons text-xl">schedule</span>
             Attendance
+        </a>
+        <a href="{{ route('admin.leave') }}" class="{{ request()->routeIs('admin.leave') ? 'sidebar-link-active' : 'sidebar-link' }}">
+            <span class="material-icons text-xl">done_all</span>
+            Leave Management
         </a>
         <a href="{{ route('admin.banks') }}" class="{{ request()->routeIs('admin.banks') ? 'sidebar-link-active' : 'sidebar-link' }}">
             <span class="material-icons text-xl">account_balance</span>
@@ -44,14 +52,6 @@
         <a href="{{ route('admin.payrolls') }}" class="{{ request()->routeIs('admin.payrolls') ? 'sidebar-link-active' : 'sidebar-link' }}">
             <span class="material-icons text-xl">currency_exchange</span>
             Payrolls
-        </a>
-        <a href="{{ route('admin.company') }}" class="{{ request()->routeIs('admin.company') ? 'sidebar-link-active' : 'sidebar-link' }}">
-            <span class="material-icons text-xl">settings</span>
-            Company Profile
-        </a>
-        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.recruits.*') ? 'sidebar-link-active' : 'sidebar-link' }}">
-            <span class="material-icons text-xl">person_search</span>
-            Recruitment
         </a>
     </nav>
     <form action="{{ route('admin.logout') }}" method="POST" class="px-4 py-4 space-y-2">

@@ -20,6 +20,9 @@ return new class extends Migration
             $table->decimal('allowance', 12, 2);
             $table->decimal('cut', 12, 2);
             $table->decimal('absence_deduction', 12, 2);
+            $table->integer('total_absence');
+            $table->integer('total_late');
+            $table->integer('working_days');
 
             $table->timestamps();
         });

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Department;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -101,18 +102,38 @@ class DepartmentManagement extends Component
     public function render(): View
     {
         FacadesView::share('pageTitle', 'Department Management');
-        $totalDepartments = Department::query()->count();
-        $totalEmployees = Employee::query()->count();
+        $admin = Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
+
+        $departmentQuery = Department::query()
+            ->where('company_id', $companyId);
+
+        $employeeQuery = Employee::query()
+            ->whereHas('department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+
+        $totalDepartments = (clone $departmentQuery)->count();
+        $totalEmployees = (clone $employeeQuery)->count();
+
         $avgEmployeesPerDepartment = $totalDepartments > 0
             ? round($totalEmployees / $totalDepartments, 1)
             : 0;
 
         return view('livewire.department-management', [
-            'departments' => Department::query()->with(['manager', 'employees'])->latest()->paginate(5),
-            'totalDepartments' => Department::query()->count(),
-            'totalEmployees' => Employee::query()->count(),
-            'managerCandidate' => Employee::query()->get(),
+            'departments' => $departmentQuery
+                ->with(['manager', 'employees'])
+                ->withCount('employees')
+                ->latest()
+                ->paginate(5),
+
+            'totalDepartments' => $totalDepartments,
+            'totalEmployees' => $totalEmployees,
             'averageEmployeesPerDepartment' => $avgEmployeesPerDepartment,
+
+            'managerCandidate' => $employeeQuery
+                ->orderBy('name')
+                ->get(['id', 'name']),
         ]);
     }
 }

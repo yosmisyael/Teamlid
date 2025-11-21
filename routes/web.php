@@ -12,6 +12,7 @@ use App\Livewire\SalaryManagement;
 use App\Livewire\PayrollManagement;
 use App\Livewire\DashboardManagement;
 use App\Livewire\CompanyManagement;
+use App\Livewire\LeaveManagement;
 use App\Http\Controllers\PayrollPdfController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,7 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
             ->name('payroll.download');
     });
     Route::get('/company', CompanyManagement::class)->name('admin.company');
+    Route::get('/leave', LeaveManagement::class)->name('admin.leave');
 
     Route::delete('/logout', [AdminController::class, 'logout'])->name('admin.logout');
 });

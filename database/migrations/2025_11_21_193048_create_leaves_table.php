@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banks', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->foreignId('company_id')
-                ->constrained()
+            $table->string('reason');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamp('start_date');
+            $table->timestamp('end_date');
+            $table->timestamps();
+            $table->foreignId('employee_id')
+                ->constrained('employees')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->enum('status', ['available', 'unavailable'])->default('available');
-            $table->timestamps();
-
-            $table->unique(['name', 'company_id']);
         });
     }
 
@@ -30,7 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bank_company');
-        Schema::dropIfExists('banks');
+        Schema::dropIfExists('leaves');
     }
 };

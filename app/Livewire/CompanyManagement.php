@@ -16,7 +16,7 @@ class CompanyManagement extends Component
 
     // State Management
     public bool $isDeleteModalOpen = false;
-    public ?int $companyId = null; // The ID of the user's company
+    public ?int $companyId = null;
 
     // Form Properties
     public string $name = '';
@@ -29,11 +29,8 @@ class CompanyManagement extends Component
 
     public function mount(): void
     {
-        // Find the company registered by the current logged-in user
-        // Assuming standard Auth. If using specific guard, adjust accordingly.
-        $user = Auth::user();
+        $user = Auth::guard('admins')->user();
 
-        // Fallback for dev seeding if Auth is not fully active yet
         $userId = $user ? $user->id : 1;
 
         $company = Company::where('registered_by', $userId)->first();

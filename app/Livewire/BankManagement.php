@@ -3,7 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Bank;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View as FacadesView;
+use Illuminate\Validation\Rule as ValidationRule;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
@@ -23,14 +25,18 @@ class BankManagement extends Component
     public ?int $bankToEditId = null;
 
     // Form Properties
-    #[Rule('required|string|unique:banks,name')]
     public string $name = '';
-    #[Rule('required|in:available,unavailable')]
     public string $status = 'available';
 
     // Filter Properties
     public string $searchQuery = '';
     public string $filterStatus = '';
+
+    public int $companyId;
+
+    public function mount(): void {
+        $this->companyId = Auth::guard('admins')->user()->company->id;
+    }
 
     public function toggleForm(): void
     {
@@ -66,7 +72,9 @@ class BankManagement extends Component
     public function saveBank(): void
     {
         $rules = [
-            'name' => 'required|string|max:100|unique:banks,name' . ($this->bankToEditId ? ',' . $this->bankToEditId : ''),
+            'name' => ValidationRule::unique('banks', 'name')
+                ->where(fn ($query) => $query->where('company_id', $this->companyId))
+                ->ignore($this->bankToEditId),
             'status' => 'required|in:available,unavailable',
         ];
 
@@ -76,6 +84,7 @@ class BankManagement extends Component
             Bank::query()->findOrFail($this->bankToEditId)->update($validated);
             $message = 'Bank details updated successfully!';
         } else {
+            $validated['company_id'] = $this->companyId;
             Bank::query()->create($validated);
             $message = 'New bank added successfully!';
         }
@@ -106,7 +115,7 @@ class BankManagement extends Component
     {
         FacadesView::share('pageTitle', 'Bank Management');
 
-        $query = Bank::query();
+        $query = Bank::query()->where('company_id', $this->companyId);
 
         if ($this->searchQuery) {
             $query->where('name', 'like', '%' . $this->searchQuery . '%');
@@ -117,8 +126,8 @@ class BankManagement extends Component
         }
 
         // Stats
-        $totalBanks = Bank::count();
-        $availableBanks = Bank::where('status', 'available')->count();
+        $totalBanks = (clone $query)->count();
+        $availableBanks = (clone $query)->where('status', 'available')->count();
         $unavailableBanks = $totalBanks - $availableBanks;
 
         return view('livewire.bank-management', [

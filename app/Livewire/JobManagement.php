@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Department;
 use App\Models\Job;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -109,18 +110,37 @@ class JobManagement extends Component
 
     public function render(): View
     {
+        $admin =Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
+
         FacadesView::share('pageTitle', 'Job Profiles Management');
 
-        $totalJobs = Job::query()->count();
-        $avgMinSalary = $totalJobs > 0 ? Job::query()->avg('min_salary') : 0;
-        $avgMaxSalary = $totalJobs > 0 ? Job::query()->avg('max_salary') : 0;
+        $jobQuery = Job::query()
+            ->whereHas('department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+
+        $totalJobs = (clone $jobQuery)->count();
+
+        $avgMinSalary = $totalJobs > 0
+            ? (clone $jobQuery)->avg('min_salary')
+            : 0;
+
+        $avgMaxSalary = $totalJobs > 0
+            ? (clone $jobQuery)->avg('max_salary')
+            : 0;
 
         return view('livewire.job-management', [
-            'jobs' => Job::query()
+            'jobs' => $jobQuery
                 ->with('department')
                 ->latest()
                 ->paginate(5),
-            'departments' => Department::query()->orderBy('name')->get(),
+
+            'departments' => Department::query()
+                ->where('company_id', $companyId)
+                ->orderBy('name')
+                ->get(),
+
             'totalJobs' => $totalJobs,
             'avgMinSalary' => round($avgMinSalary),
             'avgMaxSalary' => round($avgMaxSalary),
