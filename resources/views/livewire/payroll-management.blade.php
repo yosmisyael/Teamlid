@@ -114,6 +114,11 @@
                         </td>
                         <td class="p-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center space-x-3">
+                                <a href="{{ route('payroll.download', $payroll->id) }}" target="_blank"
+                                   class="text-gray-400 hover:text-blue-600 cursor-pointer p-1"
+                                   title="Download PDF">
+                                    <span class="material-icons">picture_as_pdf</span>
+                                </a>
                                 <button wire:click="editPayroll({{ $payroll->id }})" class="text-gray-400 hover:text-primary cursor-pointer">
                                     <span class="material-icons">edit_square</span>
                                 </button>

@@ -1,16 +1,17 @@
 <?php
 
-use \App\Http\Controllers\AdminController;
-use \App\Livewire\CompanyOnboarding;
-use \App\Livewire\DepartmentManagement;
-use \App\Livewire\JobManagement;
-use \App\Livewire\PositionManagement;
-use \App\Livewire\EmployeeManagement;
-use \App\Livewire\AttendanceManagement;
-use \App\Livewire\BankManagement;
-use \App\Livewire\SalaryManagement;
-use \App\Livewire\PayrollManagement;
-use \App\Livewire\DashboardManagement;
+use App\Http\Controllers\AdminController;
+use App\Livewire\CompanyOnboarding;
+use App\Livewire\DepartmentManagement;
+use App\Livewire\JobManagement;
+use App\Livewire\PositionManagement;
+use App\Livewire\EmployeeManagement;
+use App\Livewire\AttendanceManagement;
+use App\Livewire\BankManagement;
+use App\Livewire\SalaryManagement;
+use App\Livewire\PayrollManagement;
+use App\Livewire\DashboardManagement;
+use App\Http\Controllers\PayrollPdfController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,6 +36,10 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
     Route::get('/banks', BankManagement::class)->name('admin.banks');
     Route::get('/salaries', SalaryManagement::class)->name('admin.salaries');
     Route::get('/payrolls', PayrollManagement::class)->name('admin.payrolls');
+
+
+    Route::get('/payrolls/{id}/download', [PayrollPdfController::class, 'download'])
+        ->name('payroll.download');
 
     Route::delete('/logout', [AdminController::class, 'logout'])->name('admin.logout');
 });
