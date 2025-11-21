@@ -20,10 +20,12 @@ Route::get('/', function () {
 })->name('home');
 
 // admin authentications
-Route::get('/register', [AdminController::class, 'register'])->name('admin.register');
-Route::post('/register', [AdminController::class, 'handleRegister']);
-Route::get('/login', [AdminController::class, 'login'])->name('admin.login');
-Route::post('/login', [AdminController::class, 'handleLogin']);
+Route::middleware(['admin.redirect'])->group(function () {
+    Route::get('/register', [AdminController::class, 'register'])->name('admin.register');
+    Route::post('/register', [AdminController::class, 'handleRegister']);
+    Route::get('/login', [AdminController::class, 'login'])->name('admin.login');
+    Route::post('/login', [AdminController::class, 'handleLogin']);
+});
 
 // admin resources
 Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(function () {
