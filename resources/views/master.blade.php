@@ -6,7 +6,7 @@
     <title>@yield('title', 'Teamable')</title>
     @vite('resources/css/app.css')
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="shortcut icon" href="logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('logo.ico') }}" type="image/x-icon">
     @yield('style')
 </head>
 

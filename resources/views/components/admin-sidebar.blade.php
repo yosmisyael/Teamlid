@@ -1,8 +1,8 @@
 <aside class="w-64 bg-surface-high shadow-md text-white flex-col hidden md:flex overflow-y-auto">
     <!-- Logo -->
     <div class="h-20 flex items-center shadow-md justify-center flex-shrink-0 bg-white m-2 rounded-lg">
-        <a href="index.html" class="text-3xl font-bold text-primary flex">
-            <img src="{{asset('logo.ico')}}" alt="logo" class="h-8">
+        <a href="{{ route('admin.dashboard') }}" class="text-3xl font-bold text-primary flex">
+            <img src="{{asset('logo.svg')}}" alt="logo" class="h-8">
             eamable
         </a>
     </div>
