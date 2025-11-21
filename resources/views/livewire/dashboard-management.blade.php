@@ -1,4 +1,4 @@
-<main class="flex-1 overflow-y-auto p-6">
+<main class="flex-1 overflow-y-auto">
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <!-- Card 1: Total Employees -->
