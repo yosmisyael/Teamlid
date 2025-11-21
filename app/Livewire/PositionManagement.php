@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Job;
 use App\Models\Position;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -132,11 +133,19 @@ class PositionManagement extends Component
 
     public function render(): View
     {
+        $admin = Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
+
         FacadesView::share('pageTitle', 'Position Management');
 
-        $totalPositions = Position::query()->count();
+        $positionQuery = Position::query()
+            ->whereHas('department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
 
-        $positionsWithVacancies = Position::query()
+        $totalPositions = (clone $positionQuery)->count();
+
+        $positionsWithVacancies = (clone $positionQuery)
             ->where('status', 'available')
             ->withCount('employees')
             ->get()
@@ -146,12 +155,17 @@ class PositionManagement extends Component
             ->count();
 
         return view('livewire.position-management', [
-            'positions' => Position::query()
+            'positions' => $positionQuery
                 ->with(['department', 'job'])
                 ->withCount('employees')
                 ->latest()
                 ->paginate(6),
-            'departments' => Department::query()->orderBy('name')->get(),
+
+            'departments' => Department::query()
+                ->where('company_id', $companyId)
+                ->orderBy('name')
+                ->get(),
+
             'totalPositions' => $totalPositions,
             'openPositions' => $positionsWithVacancies
         ]);

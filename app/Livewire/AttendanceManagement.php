@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Attendance;
 use App\Models\Employee;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -127,9 +128,17 @@ class AttendanceManagement extends Component
 
     public function render(): View
     {
+        $admin = Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
+
         FacadesView::share('pageTitle', 'Attendance Monitoring');
 
-        $query = Attendance::query()->with('employee');
+        $baseQuery = Attendance::query()
+            ->whereHas('employee.department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+
+        $query = (clone $baseQuery)->with('employee');
 
         if ($this->filterDate) {
             $query->whereDate('date', $this->filterDate);
@@ -146,17 +155,25 @@ class AttendanceManagement extends Component
             });
         }
 
-        $dailyStats = Attendance::query()->whereDate('date', $this->filterDate ?: Carbon::today())
+        $dailyStats = (clone $baseQuery)
+            ->whereDate('date', $this->filterDate ?: Carbon::today())
             ->selectRaw("
-                count(*) as total,
-                sum(case when status = 'attended' then 1 else 0 end) as present,
-                sum(case when status = 'late' then 1 else 0 end) as late,
-                sum(case when status = 'absent' then 1 else 0 end) as absent
-            ")->first();
+            count(*) as total,
+            sum(case when status = 'attended' then 1 else 0 end) as present,
+            sum(case when status = 'late' then 1 else 0 end) as late,
+            sum(case when status = 'absent' then 1 else 0 end) as absent
+        ")->first();
 
         return view('livewire.attendance-management', [
             'attendances' => $query->latest('date')->paginate(10),
-            'employees' => Employee::query()->orderBy('name')->get(['id', 'name']),
+
+            'employees' => Employee::query()
+                ->whereHas('department', function ($q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+                })
+                ->orderBy('name')
+                ->get(['id', 'name']),
+
             'dailyStats' => $dailyStats,
         ]);
     }

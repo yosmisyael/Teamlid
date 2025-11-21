@@ -15,6 +15,7 @@ class Department extends Model
         'name',
         'manager_id',
         'is_active',
+        'company_id',
     ];
 
     public function employees(): HasMany {
@@ -23,5 +24,9 @@ class Department extends Model
 
     public function manager(): BelongsTo {
         return $this->belongsTo(Employee::class, 'manager_id');
+    }
+
+    public function company(): BelongsTo {
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

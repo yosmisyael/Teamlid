@@ -20,6 +20,9 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->nullOnDelete();
             $table->boolean('is_active')->default(true);
+            $table->foreignId('company_id')
+                ->constrained()
+                ->onUpdate('cascade');
             $table->timestamps();
         });
     }

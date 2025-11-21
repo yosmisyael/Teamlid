@@ -8,6 +8,7 @@ use App\Models\PayrollSchedule;
 use App\Services\PayrollService;
 use App\Models\Salary;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View as FacadesView;
@@ -241,30 +242,47 @@ class PayrollManagement extends Component
     {
         FacadesView::share('pageTitle', 'Payroll Management');
 
-        $query = Payroll::query()->with('employee');
+        $admin = Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
 
-        if ($this->searchQuery) {
-            $query->whereHas('employee', function ($q) {
-                $q->where('name', 'like', '%' . $this->searchQuery . '%');
+        $baseQuery = Payroll::query()
+            ->whereHas('employee.department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
             });
-        }
 
-        if ($this->filterPeriod) {
-            $query->where('period_month', $this->filterPeriod);
-        }
+        $statsQuery = (clone $baseQuery);
 
-        // Stats for the filtered period
-        $statsQuery = Payroll::query();
         if ($this->filterPeriod) {
             $statsQuery->where('period_month', $this->filterPeriod);
         }
 
-        $totalDisbursed = $statsQuery->selectRaw('SUM(base_salary + allowance - cut) as total')->value('total') ?? 0;
+        $totalDisbursed = (clone $statsQuery)
+            ->sum(DB::raw('base_salary + allowance - cut - COALESCE(absence_deduction, 0)'));
+
         $countDisbursed = $statsQuery->count();
 
+        $tableQuery = (clone $baseQuery)->with('employee');
+
+        if ($this->filterPeriod) {
+            $tableQuery->where('period_month', $this->filterPeriod);
+        }
+
+        if ($this->searchQuery) {
+            $tableQuery->whereHas('employee', function ($q) {
+                $q->where('name', 'like', '%' . $this->searchQuery . '%');
+            });
+        }
+
         return view('livewire.payroll-management', [
-            'payrolls' => $query->latest('payment_date')->paginate(10),
-            'employees' => Employee::query()->orderBy('name')->get(['id', 'name']),
+            'payrolls' => $tableQuery->latest('payment_date')->paginate(10),
+
+            'employees' => Employee::query()
+                ->whereHas('department', function ($q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+                })
+                ->orderBy('name')
+                ->get(['id', 'name']),
+
             'totalDisbursed' => $totalDisbursed,
             'countDisbursed' => $countDisbursed,
         ]);

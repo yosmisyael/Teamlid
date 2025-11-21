@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 
 class Payroll extends Model
 {
@@ -15,6 +16,9 @@ class Payroll extends Model
         'allowance',
         'cut',
         'absence_deduction',
+        'total_absence',
+        'total_late',
+        'working_days',
     ];
 
     protected $casts = [
@@ -27,7 +31,7 @@ class Payroll extends Model
 
     public function calculateNetSalary(): float
     {
-        return $this->base_salary + $this->allowance - $this->cut - $this->absence_deduction;
+        return $this->base_salary + $this->allowance - $this->cut - abs($this->absence_deduction);
     }
 
     public function employee(): BelongsTo

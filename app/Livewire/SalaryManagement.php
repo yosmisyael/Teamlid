@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Models\Bank;
 use App\Models\Employee;
 use App\Models\Salary;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -114,28 +116,54 @@ class SalaryManagement extends Component
 
     public function render(): View
     {
+        $admin = Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
+
         FacadesView::share('pageTitle', 'Salary Management');
 
-        $query = Salary::query()->with(['employee', 'bank']);
+        $baseSalaryQuery = Salary::query()
+            ->whereHas('employee.department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+
+        $totalRecords = (clone $baseSalaryQuery)->count();
+
+        $totalPayroll = (clone $baseSalaryQuery)
+            ->sum(DB::raw('base_salary + allowance'));
+
+        $avgSalary = $totalRecords > 0
+            ? (clone $baseSalaryQuery)->avg('base_salary')
+            : 0;
+
+        $tableQuery = (clone $baseSalaryQuery)->with(['employee', 'bank']);
 
         if ($this->searchQuery) {
-            $query->whereHas('employee', function ($q) {
-                $q->where('name', 'like', '%' . $this->searchQuery . '%');
-            })->orWhere('bank_account', 'like', '%' . $this->searchQuery . '%');
+            $tableQuery->where(function ($q) {
+                $q->whereHas('employee', function ($subQ) {
+                    $subQ->where('name', 'like', '%' . $this->searchQuery . '%');
+                })
+                    ->orWhere('bank_account', 'like', '%' . $this->searchQuery . '%');
+            });
         }
 
-        // Calculations for Stats
-        $allSalaries = Salary::all();
-        $totalPayroll = $allSalaries->sum(fn($s) => ($s->base_salary + $s->allowance));
-        $avgSalary = $allSalaries->count() > 0 ? $allSalaries->avg('base_salary') : 0;
-
         return view('livewire.salary-management', [
-            'salaries' => $query->with(['employee', 'bank'])->latest()->paginate(10),
-            'employees' => Employee::query()->orderBy('name')->get(['id', 'name']),
-            'banks' => Bank::query()->where('status', 'available')->orderBy('name')->get(['id', 'name']),
+            'salaries' => $tableQuery->latest()->paginate(10),
+
+            'employees' =>Employee::query()
+                ->whereHas('department', function ($q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+                })
+                ->orderBy('name')
+                ->get(['id', 'name']),
+
+            'banks' => Bank::query()
+                ->where('status', 'available')
+                ->orderBy('name')
+                ->get(['id', 'name']),
+
             'totalPayroll' => $totalPayroll,
             'avgSalary' => $avgSalary,
-            'totalRecords' => $allSalaries->count(),
+            'totalRecords' => $totalRecords,
         ]);
     }
 }

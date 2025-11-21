@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('job_profiles', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->unique();
+            $table->string('name', 100);
             $table->integer('min_salary');
             $table->integer('max_salary');
             $table->unsignedBigInteger('department_id');
@@ -24,6 +24,8 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->timestamps();
+
+            $table->unique(['department_id', 'name']);
         });
     }
 

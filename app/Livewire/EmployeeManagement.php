@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\Job;
 use App\Models\Position;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -192,18 +193,32 @@ class EmployeeManagement extends Component
 
     public function render(): View
     {
+        $admin = Auth::guard('admins')->user();
+        $companyId = $admin->company->id;
+        $employeeQuery = Employee::query()
+            ->whereHas('department', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
+
         FacadesView::share('pageTitle', 'Employee Directory');
 
-        $totalEmployees = Employee::query()->count();
-        $activeEmployees = Employee::query()->where('status', 'active')->count();
+        $totalEmployees = (clone $employeeQuery)->count();
+        $activeEmployees = (clone $employeeQuery)->where('status', 'active')->count();
         $inactiveEmployees = $totalEmployees - $activeEmployees;
 
+        $employees = $employeeQuery
+            ->with(['department', 'job', 'position'])
+            ->latest()
+            ->paginate(10);
+
+        $departments = Department::query()
+            ->where('company_id', $companyId)
+            ->orderBy('name')
+            ->get();
+
         return view('livewire.employee-management', [
-            'employees' => Employee::query()
-                ->with(['department', 'job', 'position'])
-                ->latest()
-                ->paginate(10),
-            'departments' => Department::query()->orderBy('name')->get(),
+            'employees' => $employees,
+            'departments' => $departments,
             'totalEmployees' => $totalEmployees,
             'activeEmployees' => $activeEmployees,
             'inactiveEmployees' => $inactiveEmployees,

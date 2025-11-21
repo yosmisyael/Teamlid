@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
@@ -25,5 +25,10 @@ class Company extends Model
 
     public function registeredBy(): BelongsTo {
         return $this->belongsTo(Admin::class, 'registered_by');
+    }
+
+    public function banks(): HasMany
+    {
+        return $this->hasMany(Bank::class, 'company_id');
     }
 }

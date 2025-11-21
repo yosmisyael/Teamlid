@@ -25,8 +25,8 @@ class PayrollService
         $allowance = $salary->allowance;
         $cut = $salary->cut;
 
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now()->endOfMonth();
+        $startDate = Carbon::now()->subMonth()->startOfMonth();
+        $endDate = Carbon::now()->subMonth()->endOfMonth();
 
         $joinDate = Carbon::parse($employee->created_at);
 
@@ -40,10 +40,10 @@ class PayrollService
         }
 
         // late fine
-        $deductions = $this->calculateDeductions($employee, $startDate, $endDate);
+        $deductionData = $this->calculateDeductions($employee, $startDate, $endDate);
 
         try {
-            DB::transaction(function () use ($employee, $baseSalary, $allowance, $cut, $deductions) {
+            DB::transaction(function () use ($employee, $baseSalary, $allowance, $cut, $deductionData) {
                 $existingPayroll = Payroll::query()->where('employee_id', $employee->id)
                     ->where('period_month', Carbon::now()->format('m-Y'))
                     ->first();
@@ -55,13 +55,17 @@ class PayrollService
                 }
 
                 $payroll->employee_id = $employee->id;
-                $payroll->period_month = Carbon::now()->format('Y-m');
+                $payroll->period_month = Carbon::now()->subMonth()->format('Y-m');
                 $payroll->payment_date = Carbon::now();
 
                 $payroll->base_salary = $baseSalary;
                 $payroll->allowance = $allowance;
                 $payroll->cut = $cut;
-                $payroll->absence_deduction = $deductions;
+                $payroll->absence_deduction = $deductionData['totalDeduction'];
+                $payroll->working_days = $deductionData['workingDays'];
+                $payroll->total_absence = $deductionData['totalAbsence'];
+                $payroll->total_late = $deductionData['totalLate'];
+
 
                 $payroll->save();
 
@@ -72,11 +76,15 @@ class PayrollService
         }
     }
 
-    private function calculateDeductions(Employee $employee, Carbon $start, Carbon $end): float
+    private function calculateDeductions(Employee $employee, Carbon $start, Carbon $end): array
     {
         $totalDeduction = 0;
         $finePerMinute = 5000;
         $fineAbsent = 100000;
+
+        $realWorkingDays = 0;
+        $totalAbsence = 0;
+        $totalLate = 0;
 
         $attendanceDates = Attendance::query()->where('employee_id', $employee->id)
             ->whereBetween('date', [$start->format('Y-m-d'), $end->format('Y-m-d')])
@@ -84,6 +92,8 @@ class PayrollService
             ->toArray();
 
         $currentDate = $start->copy();
+
+        $limitDate = $end->isFuture() ? Carbon::now() : $end;
 
         while ($currentDate <= $end) {
             $dateString = $currentDate->format('Y-m-d');
@@ -93,22 +103,36 @@ class PayrollService
                 continue;
             }
 
+            if ($currentDate->gt($limitDate)) {
+                $currentDate->addDay();
+                continue;
+            }
+
+            $realWorkingDays++;
+
             if (array_key_exists($dateString, $attendanceDates)) {
                 $startWorkAt = Carbon::parse($dateString . ' 08:00:00');
                 $arrivalTime = Carbon::parse($dateString . ' ' . $attendanceDates[$dateString]);
 
                 if ($arrivalTime->gt($startWorkAt)) {
                     $late = $arrivalTime->diffInMinutes($startWorkAt);
+                    $totalLate += $late;
                     $totalDeduction += ($late * $finePerMinute);
                 }
             } else {
+                $totalAbsence++;
                 $totalDeduction += $fineAbsent;
             }
 
             $currentDate->addDay();
         }
 
-        return $totalDeduction;
+        return [
+            'totalDeduction' => $totalDeduction,
+            'totalAbsence' => $totalAbsence,
+            'totalLate' => $totalLate,
+            'workingDays' => $realWorkingDays,
+        ];
     }
 
     private function calculateOvertime(Employee $employee, Carbon $start, Carbon $end): float

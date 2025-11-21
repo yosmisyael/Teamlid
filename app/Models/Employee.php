@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -46,6 +47,12 @@ class Employee extends Model
     }
 
     public function attendances(): HasMany {
-        return $this->hasMany(Attendance::class, 'karyawan_id');
+        return $this->hasMany(Attendance::class, 'employee_id', 'id');
     }
+
+    public function company(): HasOneThrough {
+        return $this->hasOneThrough(Company::class, Department::class, 'id', 'id', 'department_id');
+    }
+
+
 }
