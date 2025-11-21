@@ -11,6 +11,7 @@ use App\Livewire\BankManagement;
 use App\Livewire\SalaryManagement;
 use App\Livewire\PayrollManagement;
 use App\Livewire\DashboardManagement;
+use App\Livewire\CompanyManagement;
 use App\Http\Controllers\PayrollPdfController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,11 +36,12 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
     Route::get('/attendances', AttendanceManagement::class)->name('admin.attendances');
     Route::get('/banks', BankManagement::class)->name('admin.banks');
     Route::get('/salaries', SalaryManagement::class)->name('admin.salaries');
-    Route::get('/payrolls', PayrollManagement::class)->name('admin.payrolls');
-
-
-    Route::get('/payrolls/{id}/download', [PayrollPdfController::class, 'download'])
-        ->name('payroll.download');
+    Route::prefix('payrolls')->group(function () {
+        Route::get('/', PayrollManagement::class)->name('admin.payrolls');
+        Route::get('/payrolls/{id}/download', [PayrollPdfController::class, 'download'])
+            ->name('payroll.download');
+    });
+    Route::get('/company', CompanyManagement::class)->name('admin.company');
 
     Route::delete('/logout', [AdminController::class, 'logout'])->name('admin.logout');
 });

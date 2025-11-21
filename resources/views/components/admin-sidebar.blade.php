@@ -45,6 +45,10 @@
             <span class="material-icons text-xl">currency_exchange</span>
             Payrolls
         </a>
+        <a href="{{ route('admin.company') }}" class="{{ request()->routeIs('admin.company') ? 'sidebar-link-active' : 'sidebar-link' }}">
+            <span class="material-icons text-xl">settings</span>
+            Company Profile
+        </a>
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.recruits.*') ? 'sidebar-link-active' : 'sidebar-link' }}">
             <span class="material-icons text-xl">person_search</span>
             Recruitment
