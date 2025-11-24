@@ -175,6 +175,17 @@
                             </div>
                             @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
+                        {{-- password field --}}
+                        @if(!$employeeToEditId)
+                            <div class="input-group">
+                                <label class="input-label">Account Password</label>
+                                <div class="relative mt-1 rounded-md shadow-sm">
+                                    <span class="material-icons text-xl text-primary input-icon">key</span>
+                                    <input wire:model="password" type="password" class="input-field">
+                                </div>
+                                @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            </div>
+                        @endif
                         {{-- phone field --}}
                         <div class="input-group">
                             <label class="input-label">Phone Number</label>

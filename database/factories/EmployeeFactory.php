@@ -29,6 +29,7 @@ class employeeFactory extends Factory
             'department_id' => null,
             'position_id' => null,
             'job_id' => null,
+            'password' => bcrypt('test1234'),
         ];
     }
 

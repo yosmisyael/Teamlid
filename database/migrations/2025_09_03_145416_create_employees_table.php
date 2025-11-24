@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->date('birth_date');
             $table->text('address');
             $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->string('password', 100);
             $table->timestamps();
 
             $table->softDeletes();

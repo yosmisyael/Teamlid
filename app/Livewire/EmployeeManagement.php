@@ -32,7 +32,8 @@ class EmployeeManagement extends Component
     public string $phone = '';
     public string $birth_date = '';
     public string $address = '';
-    public string $status = 'active'; // Default to active for new employees
+    public string $status = 'active';
+    public string $password = '';
 
     // Relationship Properties
     public ?int $department_id = null;
@@ -106,6 +107,7 @@ class EmployeeManagement extends Component
     public function saveEmployee(): void
     {
         $emailRule = 'required|email|max:100|unique:employees,email';
+        $passwordRule = $this->employeeToEditId ? 'nullable|string|min:8' : 'required|string|min:8';
 
         if ($this->employeeToEditId) {
             $emailRule .= ',' . $this->employeeToEditId;
@@ -121,6 +123,7 @@ class EmployeeManagement extends Component
             'department_id' => 'required|exists:departments,id',
             'job_id' => 'required|exists:job_profiles,id',
             'position_id' => 'nullable|exists:positions,id',
+            'password' => $passwordRule,
         ]);
 
         if ($this->position_id) {
@@ -141,6 +144,12 @@ class EmployeeManagement extends Component
 
         if (empty($validated['position_id'])) {
             $validated['position_id'] = null;
+        }
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        } else {
+            unset($validated['password']);
         }
 
         if ($this->employeeToEditId) {

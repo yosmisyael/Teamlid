@@ -24,6 +24,7 @@ class Employee extends Model
         'department_id',
         'job_id',
         'position_id',
+        'password',
     ];
 
     public function department(): BelongsTo {
