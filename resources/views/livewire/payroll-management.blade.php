@@ -63,10 +63,10 @@
                     <span class="material-icons">manage_history</span>
                     Setup Payroll Automation
                 </button>
-{{--                <button wire:click="toggleRunModal" class="button-primary whitespace-nowrap">--}}
-{{--                    <span class="material-icons">play_arrow</span>--}}
-{{--                    Run Payroll Now--}}
-{{--                </button>--}}
+                <button wire:click="toggleRunModal" class="button-primary whitespace-nowrap">
+                    <span class="material-icons">play_arrow</span>
+                    Run Payroll Now
+                </button>
             </div>
         </div>
     </div>
@@ -267,61 +267,67 @@
         <section class="fixed w-full h-screen left-0 top-0 bg-black/10 flex justify-center items-center z-50">
             <div class="bg-surface-high p-6 w-fit min-w-[300px] rounded-lg shadow-xl">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <span class="material-icons text-indigo-600">rocket_launch</span>
+                    {{-- modal header --}}
+                    <div class="sm:flex sm:items-center">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tertiary sm:mx-0 sm:h-10 sm:w-10">
+                            <span class="material-icons text-primary">autorenew</span>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            <h3 class="text-primary font-semibold text-2xl" id="modal-title">
                                 Run Monthly Payroll
                             </h3>
-                            <div class="mt-2">
-                                <p class="text-sm text-gray-500">
-                                    Periode: <span class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
-                                </p>
-
-                                @if($pendingCount > 0)
-                                    <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                                        <div class="flex">
-                                            <div class="flex-shrink-0">
-                                                <span class="material-icons text-yellow-400 text-sm">info</span>
-                                            </div>
-                                            <div class="ml-3">
-                                                <p class="text-sm text-yellow-700">
-                                                    Ditemukan <span class="font-bold">{{ $pendingCount }} karyawan</span> yang belum digaji periode ini.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <p class="text-xs text-gray-400 mt-3">Preview karyawan yang akan diproses:</p>
-                                    <ul class="mt-1 text-sm text-gray-600 list-disc list-inside bg-gray-50 p-2 rounded">
-                                        @foreach($pendingEmployeesList as $emp)
-                                            <li>{{ $emp['name'] }} <span class="text-xs text-gray-400">(Join: {{ $emp['created_at'] }})</span></li>
-                                        @endforeach
-                                        @if($pendingCount > 5)
-                                            <li class="list-none text-xs italic mt-1">...dan {{ $pendingCount - 5 }} lainnya.</li>
-                                        @endif
-                                    </ul>
-                                @else
-                                    <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
-                                        <p class="text-sm text-green-700 font-medium">
-                                            Semua karyawan aktif sudah digaji untuk periode ini!
-                                        </p>
-                                    </div>
-                                @endif
-                            </div>
                         </div>
                     </div>
-        </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    {{-- modal body --}}
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                            Period: <span class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
+                        </p>
+
+                        @if($pendingCount > 0)
+                            <div class="mt-4 bg-tertiary/10 rounded-md border-l-4 border-primary p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <span class="material-icons text-primary text-sm">info</span>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-primary">
+                                            There are <span class="font-bold">{{ $pendingCount }} employees </span> have not paid for the selected period.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-gray-400 mt-3">Employee preview:</p>
+                            <ul class="mt-1 text-sm text-gray-600 list-disc list-inside bg-gray-50 p-2 rounded">
+                                @foreach($pendingEmployeesList as $emp)
+                                    <li>{{ $emp['name'] }}
+                                        <span class="text-xs text-gray-400">
+                                                    (ID: {{ $emp['id'] }})
+                                                </span>
+                                    </li>
+                                @endforeach
+                                @if($pendingCount > 5)
+                                    <li class="list-none text-xs italic mt-1">...dan {{ $pendingCount - 5 }} lainnya.</li>
+                                @endif
+                            </ul>
+                        @else
+                            <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
+                                <p class="text-sm text-green-700 font-medium">
+                                    All active employee has been paid for the selected period.
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-4">
                     @if($pendingCount > 0)
-                        <button wire:click="runPayrollNow" wire:loading.attr="disabled" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                        <button wire:click="runPayrollNow" wire:loading.attr="disabled" type="button" class="button-primary">
                             <span wire:loading.remove wire:target="runPayrollNow">Process Payments</span>
                             <span wire:loading wire:target="runPayrollNow">Processing...</span>
                         </button>
                     @endif
-                    <button wire:click="closeModals" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button wire:click="toggleRunModal" type="button" class="button-secondary">
                         Close
                     </button>
                 </div>

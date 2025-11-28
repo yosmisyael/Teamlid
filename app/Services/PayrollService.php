@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class PayrollService
 {
-    public function generatePayrollForEmployee(Employee $employee): void
+    public function generatePayrollForEmployee(Employee $employee, Carbon $period): void
     {
         $salary = $employee->salary;
         Log::info("[Payroll Service] Processing payroll for employee: $employee->id");
@@ -25,11 +25,12 @@ class PayrollService
         $allowance = $salary->allowance;
         $cut = $salary->cut;
 
-        $startDate = Carbon::now()->subMonth()->startOfMonth();
-        $endDate = Carbon::now()->subMonth()->endOfMonth();
+        $startDate = $period->copy()->startOfMonth();
+        $endDate = $period->copy()->endOfMonth();
 
         $joinDate = Carbon::parse($employee->created_at);
 
+        // handling employee who join between paid period
         if ($joinDate->between($startDate, $endDate)) {
             $daysWorked = $joinDate->diffInDays($endDate) + 1;
             $totalDaysInMonth = $startDate->daysInMonth;
@@ -42,10 +43,12 @@ class PayrollService
         // late fine
         $deductionData = $this->calculateDeductions($employee, $startDate, $endDate);
 
+        Log::info("[Payroll Service] Employee ID: $employee->id\nTotal Workdays: " . $deductionData['workingDays'] . "\nTotal Absent: " . $deductionData['totalAbsence'] . "\nTotal Late: " .  $deductionData['totalLate']);
+
         try {
-            DB::transaction(function () use ($employee, $baseSalary, $allowance, $cut, $deductionData) {
+            DB::transaction(function () use ($employee, $baseSalary, $allowance, $cut, $deductionData, $period) {
                 $existingPayroll = Payroll::query()->where('employee_id', $employee->id)
-                    ->where('period_month', Carbon::now()->format('m-Y'))
+                    ->where('period_month', $period->format('m-Y'))
                     ->first();
 
                 if ($existingPayroll) {
@@ -55,7 +58,7 @@ class PayrollService
                 }
 
                 $payroll->employee_id = $employee->id;
-                $payroll->period_month = Carbon::now()->subMonth()->format('Y-m');
+                $payroll->period_month = $period->format('Y-m');
                 $payroll->payment_date = Carbon::now();
 
                 $payroll->base_salary = $baseSalary;
@@ -65,7 +68,6 @@ class PayrollService
                 $payroll->working_days = $deductionData['workingDays'];
                 $payroll->total_absence = $deductionData['totalAbsence'];
                 $payroll->total_late = $deductionData['totalLate'];
-
 
                 $payroll->save();
 
@@ -78,47 +80,72 @@ class PayrollService
 
     private function calculateDeductions(Employee $employee, Carbon $start, Carbon $end): array
     {
-        $totalDeduction = 0;
+        // Configuration
         $finePerMinute = 5000;
         $fineAbsent = 100000;
+        $startWorkHour = '08:00:00';
 
-        $realWorkingDays = 0;
+        // Counters
+        $totalDeduction = 0;
+        $totalWorkdays = 0;
         $totalAbsence = 0;
         $totalLate = 0;
 
-        $attendanceDates = Attendance::query()->where('employee_id', $employee->id)
+        $attendanceRecords = Attendance::query()
+            ->where('employee_id', $employee->id)
             ->whereBetween('date', [$start->format('Y-m-d'), $end->format('Y-m-d')])
-            ->pluck('check_in_at', 'date')
-            ->toArray();
+            ->get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->date)->format('Y-m-d');
+            });
 
         $currentDate = $start->copy();
+        $limitDate = $end->isFuture() ? Carbon::now()->endOfDay() : $end->endOfDay();
 
-        $limitDate = $end->isFuture() ? Carbon::now() : $end;
-
-        while ($currentDate <= $end) {
+        while ($currentDate->lte($limitDate)) {
             $dateString = $currentDate->format('Y-m-d');
 
+            // Handle Weekends
             if ($currentDate->isWeekend()) {
                 $currentDate->addDay();
                 continue;
             }
 
-            if ($currentDate->gt($limitDate)) {
-                $currentDate->addDay();
-                continue;
-            }
+            $totalWorkdays++;
 
-            $realWorkingDays++;
+            /** @var Attendance|null $record */
+            $record = $attendanceRecords->get($dateString);
 
-            if (array_key_exists($dateString, $attendanceDates)) {
-                $startWorkAt = Carbon::parse($dateString . ' 08:00:00');
-                $arrivalTime = Carbon::parse($dateString . ' ' . $attendanceDates[$dateString]);
+            if ($record) {
+                // Check based on Schema Status
+                switch ($record->status) {
+                    case 'attended':
+                    case 'late':
+                    case 'early exit':
+                        // Check for Lateness
+                        if ($record->check_in_at) {
+                            $startWorkAt = Carbon::parse($dateString . ' ' . $startWorkHour);
+                            $arrivalTime = Carbon::parse($dateString . ' ' . $record->check_in_at);
 
-                if ($arrivalTime->gt($startWorkAt)) {
-                    $late = $arrivalTime->diffInMinutes($startWorkAt);
-                    $totalLate += $late;
-                    $totalDeduction += ($late * $finePerMinute);
+                            if ($arrivalTime->gt($startWorkAt)) {
+                                $minutes = $arrivalTime->diffInMinutes($startWorkAt);
+                                $totalLate += $minutes;
+                                $totalDeduction += ($minutes * $finePerMinute);
+                            }
+                        }
+                        break;
+
+                    case 'absent':
+                        $totalAbsence++;
+                        $totalDeduction += $fineAbsent;
+                        break;
+
+                    case 'leave':
+                    case 'sick leave':
+                    case 'annual leave':
+                        break;
                 }
+
             } else {
                 $totalAbsence++;
                 $totalDeduction += $fineAbsent;
@@ -129,9 +156,9 @@ class PayrollService
 
         return [
             'totalDeduction' => $totalDeduction,
-            'totalAbsence' => $totalAbsence,
-            'totalLate' => $totalLate,
-            'workingDays' => $realWorkingDays,
+            'totalAbsence'   => $totalAbsence,
+            'totalLate'      => $totalLate * -1,
+            'workingDays'    => $totalWorkdays,
         ];
     }
 

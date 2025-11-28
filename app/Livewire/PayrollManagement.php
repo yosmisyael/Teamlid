@@ -55,7 +55,6 @@ class PayrollManagement extends Component
 
     public function runPayrollNow(): void
     {
-        Log::info('[Payroll Service] Processing payroll');
         $service = app(PayrollService::class);
         $paidEmployeeIds = Payroll::query()->where('period_month', $this->filterPeriod)->pluck('employee_id');
 
@@ -73,7 +72,9 @@ class PayrollManagement extends Component
             DB::beginTransaction();
             $count = 0;
             foreach ($targets as $employee) {
-                $service->generatePayrollForEmployee($employee, $this->filterPeriod);
+                $service->generatePayrollForEmployee(
+                    $employee, Carbon::createFromFormat('Y-m', $this->filterPeriod)
+                );
                 $count++;
             }
 

@@ -157,8 +157,8 @@ class DatabaseSeeder extends Seeder
                     ]);
 
                 } elseif ($rand <= 95) {
-                    // 5% Sakit (Sick Leave)
-                    Attendance::create([
+                    // 5% Sick Leave
+                    Attendance::query()->create([
                         'employee_id' => $employee->id,
                         'date' => $date->format('Y-m-d'),
                         'check_in_at' => null,
@@ -166,8 +166,8 @@ class DatabaseSeeder extends Seeder
                         'status' => 'sick leave',
                     ]);
                 } elseif ($rand <= 98) {
-                    // 3% Cuti (Annual Leave) - Dikecilkan dikit
-                    Attendance::create([
+                    // 3% Annual Leave
+                    Attendance::query()->create([
                         'employee_id' => $employee->id,
                         'date' => $date->format('Y-m-d'),
                         'check_in_at' => null,
@@ -175,8 +175,8 @@ class DatabaseSeeder extends Seeder
                         'status' => 'annual leave',
                     ]);
                 } else {
-                    // 2% Alpa (Absent) - Sangat jarang
-                    Attendance::create([
+                    // 2% absent
+                    Attendance::query()->create([
                         'employee_id' => $employee->id,
                         'date' => $date->format('Y-m-d'),
                         'check_in_at' => null,
