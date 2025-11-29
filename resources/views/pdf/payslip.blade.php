@@ -5,7 +5,6 @@
     <title>Slip Gaji - {{ $payroll->period_month }}</title>
     @vite('resources/css/app.css')
     <style>
-        /* FONT FIX: Mendefinisikan sans-serif untuk body DAN tabel secara eksplisit */
         body, table, td, th {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             color: #333;
@@ -144,9 +143,9 @@
 <div class="container">
     <div class="header">
         <div class="company-details">
-            <span class="company-name">{{ $company->name ?? 'NAMA PERUSAHAAN' }}</span>
+            <span class="company-name">{{ $company->name ?? 'Company name' }}</span>
             <div class="company-address">
-                {{ $company->address ?? 'Alamat Perusahaan' }}<br>
+                {{ $company->address ?? 'Company Address' }}<br>
                 {{ $company->phone ? 'Tel: '.$company->phone : '' }}
                 {{ $company->website ? '| Web: '.$company->website : '' }}
             </div>
@@ -203,20 +202,28 @@
                 <div class="box-header">DEDUCTIONS</div>
                 <table class="finance-table">
                     <tr>
-                        <td>Other cuts (Health Assurance)</td>
-                        <td class="text-right">{{ number_format($payroll->cut, 0, ',', '.') }}</td>
+                        <td>Tax ({{ number_format($tax['percentage'], 2, ',', '.') }}%)</td>
+                        <td class="text-right">{{ number_format($tax['value'], 0, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td>Absence cuts {{ $payroll->total_absence }}</td>
-                        <td class="text-right">{{ number_format($payroll->total_absence * 100_000 ?? 0, 0, ',', '.') }}</td>
+                        <td>Health Insurance</td>
+                        <td class="text-right">{{ number_format($healthInsurance, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
-                        <td>Late cuts ({{ abs($payroll->total_late) }} minutes)</td>
-                        <td class="text-right">{{ number_format(abs($payroll->total_late * 5_000) ?? 0, 0, ',', '.') }}</td>
+                        <td>Absence cuts {{ $payroll->total_absence }} x {{ $fine['fine_absence'] }}</td>
+                        <td class="text-right">{{ number_format($payroll->total_absence * $fine['fine_absence'] ?? 0, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Late cuts ({{ abs($payroll->total_late) }} minutes x {{ $fine['fine_late']  }})</td>
+                        <td class="text-right">{{ number_format($payroll->total_late * $fine['fine_late'] ?? 0, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Other Cuts</td>
+                        <td class="text-right">{{ number_format($otherCuts, 0, ',', '.') }}</td>
                     </tr>
                     <tr><td colspan="2" style="height: 20px;"></td></tr>
                     <tr style="background-color: #fff4f4;"> <td><strong>Cuts total</strong></td>
-                        <td class="text-right deduction-total">Rp {{ number_format($payroll->cut + abs($payroll->absence_deduction), 0, ',', '.') }}</td>
+                        <td class="text-right deduction-total">Rp {{ number_format($payroll->cut + $payroll->absence_deduction + ($payroll->base_salary + $payroll->allowance) * ($tax['percentage'] / 100), 0, ',', '.') }}</td>
                     </tr>
                 </table>
             </td>
@@ -226,7 +233,7 @@
     <div class="net-pay-container">
         <span class="net-label">Total Take Home Pay</span>
         <div class="net-amount">
-            Rp {{ number_format(($payroll->base_salary + $payroll->allowance) - ($payroll->cut + (abs($payroll->absence_deduction) ?? 0)), 0, ',', '.') }}
+            Rp {{ number_format($taxedSalary - ($payroll->cut + $payroll->absence_deduction ?? 0 + $tax['value']), 0, ',', '.') }}
         </div>
     </div>
 

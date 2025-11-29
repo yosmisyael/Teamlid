@@ -58,4 +58,9 @@ class Employee extends Authenticatable
     public function isRegisteredInCompany(string $companyName): bool {
         return $this->department?->company?->name === $companyName;
     }
+
+    public function deductions()
+    {
+        return $this->belongsToMany(Deduction::class, 'employee_deduction');
+    }
 }

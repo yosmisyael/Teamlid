@@ -28,6 +28,7 @@ class PayrollManagement extends Component
     public bool $isDeleteModalOpen = false;
     public bool $isSetupFormOpen = false;
     public bool $isRunModalOpen = false;
+    public bool $isRejectModalOpen = false;
 
     // payroll data
     public int $pendingCount = 0;
@@ -106,6 +107,13 @@ class PayrollManagement extends Component
 
     public function toggleRunModal(): void
     {
+        $period = Carbon::createFromFormat('Y-m', $this->filterPeriod);
+
+        if ($period->copy()->endOfMonth()->isFuture()) {
+            $this->isRejectModalOpen = true;
+            return;
+        }
+
         if (!$this->isRunModalOpen) {
             $paidEmployeeIds = Payroll::query()->where('period_month', $this->filterPeriod)
                 ->pluck('employee_id')

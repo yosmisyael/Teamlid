@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Attendance;
+use App\Models\Deduction;
 use App\Models\Employee;
 use App\Models\Payroll;
 use Carbon\Carbon;
@@ -11,6 +12,29 @@ use Illuminate\Support\Facades\Log;
 
 class PayrollService
 {
+    private float $fineLatePerMinute;
+    private float $fineAbsent;
+    private string $startWorkHour;
+
+    private float $healthInsurancePremium;
+
+    private float $tax;
+
+    public function __construct()
+    {
+        $configs = Deduction::query()
+            ->whereIn('slug', ['fine_late', 'fine_absence', 'health_insurance', 'tax'])
+            ->pluck('value', 'slug');
+
+        $this->fineLatePerMinute = $configs['fine_late'] ?? 5000;
+        $this->fineAbsent    = $configs['fine_absence'] ?? 100000;
+
+        $this->startWorkHour = '08:00:00';
+
+        $this->healthInsurancePremium = $configs['health_insurance'] ?? 0;
+        $this->tax = $configs['tax'] ?? 0;
+    }
+
     public function generatePayrollForEmployee(Employee $employee, Carbon $period): void
     {
         $salary = $employee->salary;
@@ -23,7 +47,7 @@ class PayrollService
 
         $baseSalary = $salary->base_salary;
         $allowance = $salary->allowance;
-        $cut = $salary->cut;
+        $cut = $this->healthInsurancePremium + $salary->cut;
 
         $startDate = $period->copy()->startOfMonth();
         $endDate = $period->copy()->endOfMonth();
@@ -40,10 +64,8 @@ class PayrollService
             $baseSalary = $baseSalary * $proRataFactor;
         }
 
-        // late fine
+        // late or absent fine
         $deductionData = $this->calculateDeductions($employee, $startDate, $endDate);
-
-        Log::info("[Payroll Service] Employee ID: $employee->id\nTotal Workdays: " . $deductionData['workingDays'] . "\nTotal Absent: " . $deductionData['totalAbsence'] . "\nTotal Late: " .  $deductionData['totalLate']);
 
         try {
             DB::transaction(function () use ($employee, $baseSalary, $allowance, $cut, $deductionData, $period) {
@@ -64,10 +86,10 @@ class PayrollService
                 $payroll->base_salary = $baseSalary;
                 $payroll->allowance = $allowance;
                 $payroll->cut = $cut;
-                $payroll->absence_deduction = $deductionData['totalDeduction'];
                 $payroll->working_days = $deductionData['workingDays'];
                 $payroll->total_absence = $deductionData['totalAbsence'];
                 $payroll->total_late = $deductionData['totalLate'];
+                $payroll->absence_deduction = $deductionData['totalDeduction'];
 
                 $payroll->save();
 
@@ -78,13 +100,8 @@ class PayrollService
         }
     }
 
-    private function calculateDeductions(Employee $employee, Carbon $start, Carbon $end): array
+    private function calculateDeductions(Employee $employee, Carbon $start, Carbon $end, ): array
     {
-        // Configuration
-        $finePerMinute = 5000;
-        $fineAbsent = 100000;
-        $startWorkHour = '08:00:00';
-
         // Counters
         $totalDeduction = 0;
         $totalWorkdays = 0;
@@ -124,20 +141,19 @@ class PayrollService
                     case 'early exit':
                         // Check for Lateness
                         if ($record->check_in_at) {
-                            $startWorkAt = Carbon::parse($dateString . ' ' . $startWorkHour);
+                            $startWorkAt = Carbon::parse($dateString . ' ' . $this->startWorkHour);
                             $arrivalTime = Carbon::parse($dateString . ' ' . $record->check_in_at);
 
                             if ($arrivalTime->gt($startWorkAt)) {
                                 $minutes = $arrivalTime->diffInMinutes($startWorkAt);
                                 $totalLate += $minutes;
-                                $totalDeduction += ($minutes * $finePerMinute);
                             }
                         }
                         break;
 
                     case 'absent':
                         $totalAbsence++;
-                        $totalDeduction += $fineAbsent;
+                        $totalDeduction += $this->fineAbsent;
                         break;
 
                     case 'leave':
@@ -148,14 +164,16 @@ class PayrollService
 
             } else {
                 $totalAbsence++;
-                $totalDeduction += $fineAbsent;
+                $totalDeduction += $this->fineAbsent;
             }
 
             $currentDate->addDay();
         }
 
+        $deductionSum = $totalDeduction + ($totalLate * -1) * $this->fineLatePerMinute;
+
         return [
-            'totalDeduction' => $totalDeduction,
+            'totalDeduction' => $deductionSum,
             'totalAbsence'   => $totalAbsence,
             'totalLate'      => $totalLate * -1,
             'workingDays'    => $totalWorkdays,

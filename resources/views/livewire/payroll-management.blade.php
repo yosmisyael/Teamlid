@@ -335,6 +335,37 @@
         </section>
     @endif
 
+    {{-- Reject Modal --}}
+    @if($isRejectModalOpen)
+        <section class="fixed w-full h-screen left-0 top-0 bg-black/10 flex justify-center items-center z-50">
+            <div class="bg-surface-high p-3 w-fit min-w-[300px] rounded-lg shadow-xl">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    {{-- modal header --}}
+                    <div class="sm:flex sm:items-center">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tertiary sm:mx-0 sm:h-10 sm:w-10">
+                            <span class="material-icons text-primary">close</span>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-primary font-semibold text-2xl" id="modal-title">
+                                Invalid Action.
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                            Period: <span class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
+                        </p>
+                        <p>The selected period has not been completed yet.</p>
+                    </div>
+                <div class="sm:flex sm:flex-row-reverse gap-4 pt-3">
+                    <button wire:click="$set('isRejectModalOpen', false)" type="button" class="button-primary">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </section>
+    @endif
+
     {{--  Setup Automation Modal  --}}
     <section class="h-screen w-full md:w-1/3 {{ $isSetupFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
             <div class="p-6 border-b border-gray-200 flex justify-between items-center">

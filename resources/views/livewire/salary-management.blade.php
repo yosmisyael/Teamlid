@@ -41,10 +41,24 @@
                        class="bg-gray-100 rounded-md py-2.5 pl-10 pr-4 w-full focus:outline-none focus:ring-2 focus:ring-secondary focus:bg-white"
                        placeholder="Search by employee or account...">
             </div>
-            <button wire:click="toggleForm" class="button-primary">
-                <span class="material-icons">add_card</span>
-                Define Salary
-            </button>
+            <div class="flex gap-4">
+                <button wire:click="toggleTaxForm" class="button-primary">
+                    <span class="material-icons">gavel</span>
+                    Configure Tax
+                </button>
+                <button wire:click="toggleFineForm" class="button-primary">
+                    <span class="material-icons">content_cut</span>
+                    Configure Fine
+                </button>
+                <button wire:click="toggleHealthInsurance" class="button-primary">
+                    <span class="material-icons">health_and_safety</span>
+                    Manage Health Insurance
+                </button>
+                <button wire:click="toggleSalaryForm" class="button-primary">
+                    <span class="material-icons">add_card</span>
+                    Define Salary
+                </button>
+            </div>
         </div>
     </div>
 
@@ -108,13 +122,13 @@
         {{ $salaries->links('components.pagination') }}
     </div>
 
-    {{--  Slide-over Form  --}}
-    <section class="h-screen w-full md:w-1/3 {{ $isFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
+    {{--  Slide-over Form Salary  --}}
+    <section class="h-screen w-full md:w-1/3 {{ $isSalaryFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
         <div class="p-6 border-b border-gray-200 flex justify-between items-center">
             <h2 class="text-xl font-bold text-primary cursor-pointer">
                 {{ $salaryToEditId ? 'Edit Salary Details' : 'Define Salary' }}
             </h2>
-            <button wire:click="toggleForm" class="text-gray-500 hover:text-red-500 cursor-pointer">
+            <button wire:click="toggleSalaryForm" class="text-gray-500 hover:text-red-500 cursor-pointer">
                 <span class="material-icons">close</span>
             </button>
         </div>
@@ -207,11 +221,133 @@
                 </div>
 
                 <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 mt-auto">
-                    <button wire:click="toggleForm" type="button" class="button-secondary">
+                    <button wire:click="toggleSalaryForm" type="button" class="button-secondary">
                         Cancel
                     </button>
                     <button type="submit" class="button-primary">
                         {{ $salaryToEditId ? 'Save Changes' : 'Submit' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    {{--  Slide-over Form Health Insurance  --}}
+    <section class="h-screen w-full md:w-1/3 {{ $isHealthInsurance ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-primary cursor-pointer">
+                Configure Premium for Health Insurance
+            </h2>
+            <button wire:click="toggleHealthInsurance" class="text-gray-500 hover:text-red-500 cursor-pointer">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-1">
+            <form wire:submit.prevent="saveHealthInsurance" class="flex flex-col gap-5">
+                {{-- Health Insurance Value --}}
+                <div class="input-group">
+                    <label for="healthInsurance" class="input-label">Insurance Premium</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">price_check</span>
+                        <input wire:model.live="healthInsurance" id="healthInsurance" type="text" class="input-field" placeholder="130000">
+                    </div>
+                    @error('healthInsurance')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 mt-auto">
+                    <button wire:click="toggleHealthInsurance" type="button" class="button-secondary">
+                        Cancel
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    {{--  Slide-over Form Fine  --}}
+    <section class="h-screen w-full md:w-1/3 {{ $isFineFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-primary cursor-pointer">
+                Configure Fine Value
+            </h2>
+            <button wire:click="toggleFineForm" class="text-gray-500 hover:text-red-500 cursor-pointer">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-1">
+            <form wire:submit.prevent="saveFine" class="flex flex-col gap-5">
+                {{-- Values --}}
+                <div class="input-group">
+                    <label for="late" class="input-label">Late Fine</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">money_off</span>
+                        <input wire:model.live="late" id="late" type="text" class="input-field" placeholder="5000">
+                    </div>
+                    @error('late')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="input-group">
+                    <label for="absence" class="input-label">Absence Fine</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">money_off</span>
+                        <input wire:model.live="absence" id="late" type="text" class="input-field" placeholder="100000">
+                    </div>
+                    @error('absence')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 mt-auto">
+                    <button wire:click="toggleFineForm" type="button" class="button-secondary">
+                        Cancel
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    {{--  Slide-over Form Tax  --}}
+    <section class="h-screen w-full md:w-1/3 {{ $isTaxFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-primary cursor-pointer">
+                Configure Tax Rate
+            </h2>
+            <button wire:click="toggleTaxForm" class="text-gray-500 hover:text-red-500 cursor-pointer">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-1">
+            <form wire:submit.prevent="saveTax" class="flex flex-col gap-5">
+                {{-- Amount --}}
+                <div class="input-group">
+                    <label for="tax" class="input-label">Tax Percentage</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">percent</span>
+                        <input wire:model.live="tax" id="tax" type="text" class="input-field" placeholder="12">
+                    </div>
+                    @error('tax')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 mt-auto">
+                    <button wire:click="toggleTaxForm" type="button" class="button-secondary">
+                        Cancel
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Save Changes
                     </button>
                 </div>
             </form>

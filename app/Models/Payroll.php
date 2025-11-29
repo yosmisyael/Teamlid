@@ -31,7 +31,9 @@ class Payroll extends Model
 
     public function calculateNetSalary(): float
     {
-        return $this->base_salary + $this->allowance - $this->cut - abs($this->absence_deduction);
+        $tax = Deduction::query()->where('slug', '=', 'tax')->first();
+        $taxedSalary = ($this->base_salary + $this->allowance) * ((1 - $tax->value / 100));
+        return $taxedSalary - $this->cut - $this->absence_deduction;
     }
 
     public function employee(): BelongsTo

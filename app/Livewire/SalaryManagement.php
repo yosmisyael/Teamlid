@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Bank;
+use App\Models\Deduction;
 use App\Models\Employee;
 use App\Models\Salary;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -20,12 +22,24 @@ class SalaryManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    public bool $isFormOpen = false;
+    public bool $isSalaryFormOpen = false;
+    public bool $isTaxFormOpen = false;
+    public bool $isHealthInsurance = false;
+    public bool $isFineFormOpen = false;
     public bool $isDeleteModalOpen = false;
     public ?int $salaryToDeleteId = null;
     public ?int $salaryToEditId = null;
 
     // Form Properties
+    #[Rule('required|numeric|min:0|max:9999999999.99|decimal:0,2')]
+    public $tax;
+    #[Rule('required|numeric|min:0|max:9999999999.99|decimal:0,2')]
+    public $late;
+    #[Rule('required|numeric|min:0|max:9999999999.99|decimal:0,2')]
+    public $absence;
+    #[Rule('required|numeric|min:0|max:9999999999.99|decimal:0,2')]
+    public $healthInsurance;
+
     public ?int $employee_id = null;
     public ?int $bank_id = null;
     public string $bank_account = '';
@@ -36,12 +50,62 @@ class SalaryManagement extends Component
     // Filter Properties
     public string $searchQuery = '';
 
-    public function toggleForm(): void
+    public function toggleSalaryForm(): void
     {
-        $this->isFormOpen = !$this->isFormOpen;
+        $this->isSalaryFormOpen = !$this->isSalaryFormOpen;
 
-        if (!$this->isFormOpen) {
+        if (!$this->isSalaryFormOpen) {
             $this->reset(['salaryToEditId', 'employee_id', 'bank_id', 'bank_account', 'base_salary', 'allowance', 'cut']);
+        }
+    }
+
+    public function toggleTaxForm(): void
+    {
+        $this->isTaxFormOpen = !$this->isTaxFormOpen;
+
+        if ($this->isTaxFormOpen) {
+            $taxRecord = Deduction::query()->where('slug', '=', 'tax')->first();
+            if ($taxRecord) {
+                $this->tax = $taxRecord->value;
+            }
+        } else {
+            $this->reset('tax');
+        }
+    }
+
+    public function toggleHealthInsurance(): void
+    {
+        $this->isHealthInsurance = !$this->isHealthInsurance;
+
+        if ($this->isHealthInsurance) {
+            $record = Deduction::query()->where('slug', '=', 'health_insurance')->first();
+            if ($record) {
+                $this->healthInsurance = $record->value;
+            }
+        } else {
+            $this->reset('healthInsurance');
+        }
+    }
+
+    public function toggleFineForm(): void
+    {
+        $this->isFineFormOpen = !$this->isFineFormOpen;
+
+        if ($this->isFineFormOpen) {
+            $lateFineRecord = Deduction::query()
+                ->where('slug', '=', 'fine_late')
+                ->first();
+            $absenceFineRecord = Deduction::query()
+                ->where('slug', '=', 'fine_absence')
+                ->first();
+
+            if ($lateFineRecord) {
+                $this->late = $lateFineRecord->value;
+            }
+
+            if ($absenceFineRecord) {
+                $this->absence = $absenceFineRecord->value;
+            }
         }
     }
 
@@ -63,8 +127,57 @@ class SalaryManagement extends Component
         $this->allowance = (float) $salary->allowance;
         $this->cut = (float) $salary->cut;
 
-        $this->isFormOpen = true;
+        $this->isSalaryFormOpen = true;
     }
+
+    public function saveTax(): void
+    {
+        Deduction::query()->updateOrCreate([ 'name' => 'Tax' ], [
+            'value' => (float) $this->tax,
+            'type' => 'percentage',
+            'is_global' => true,
+        ]);
+
+        $this->toggleTaxForm();
+    }
+
+    public function saveFine(): void
+    {
+        try {
+            DB::beginTransaction();
+            Deduction::query()->updateOrCreate([ 'slug' => 'fine_late'], [
+                'name' => 'Fine Late',
+                'value' => (float) $this->late,
+                'type' => 'fixed',
+                'is_global' => true,
+            ]);
+
+            Deduction::query()->updateOrCreate([ 'slug' => 'fine_absence' ], [
+                'name' => 'Fine Absence',
+                'value' => (float) $this->absence,
+                'type' => 'fixed',
+                'is_global' => true,
+            ]);
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+        }
+
+        $this->toggleFineForm();
+    }
+
+    public function saveHealthInsurance(): void
+    {
+        Deduction::query()->updateOrCreate([ 'slug' => 'health_insurance' ], [
+            'name' => 'Health Insurance',
+            'value' => (float) $this->healthInsurance,
+            'type' => 'fixed',
+            'is_global' => true,
+        ]);
+
+        $this->toggleHealthInsurance();
+    }
+
 
     public function saveSalary(): void
     {
@@ -97,7 +210,7 @@ class SalaryManagement extends Component
             $message = 'Payroll data defined successfully!';
         }
 
-        $this->toggleForm();
+        $this->toggleSalaryForm();
         session()->flash('success', $message);
     }
 
@@ -153,6 +266,7 @@ class SalaryManagement extends Component
                 ->whereHas('department', function ($q) use ($companyId) {
                     $q->where('company_id', $companyId);
                 })
+                ->whereDoesntHave('salary')
                 ->orderBy('name')
                 ->get(['id', 'name']),
 
