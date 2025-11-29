@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'company.setup' => \App\Http\Middleware\EnsureAdminHasCompany::class,
             'admin.auth' => \App\Http\Middleware\AuthenticateAdmin::class,
             'admin.redirect' => \App\Http\Middleware\RejectAuthenticatedAdmin::class,
+            'employee.redirect' => \App\Http\Middleware\RedirectAuthenticatedEmployees::class,
+            'employee.auth' => \App\Http\Middleware\EnsureEmployeeAuthenticated::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

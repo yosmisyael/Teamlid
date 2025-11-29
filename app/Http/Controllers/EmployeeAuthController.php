@@ -13,8 +13,7 @@ class EmployeeAuthController extends Controller
     public function login(string $company)
     {
         // company validity check
-        $parsedSlug = Str::title(str_replace('-', ' ', $company));
-        $companyData = Company::query()->where('name', 'ilike', $parsedSlug)->firstOrFail();
+        $companyData = Company::query()->where('slug', '=', $company)->firstOrFail();
 
         return view('auth.employee-login', [
             'companyName' => $companyData->name,

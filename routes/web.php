@@ -43,7 +43,7 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
     Route::get('/salaries', SalaryManagement::class)->name('admin.salaries');
     Route::prefix('payrolls')->group(function () {
         Route::get('/', PayrollManagement::class)->name('admin.payrolls');
-        Route::get('/payrolls/{id}/download', [PayrollPdfController::class, 'download'])
+        Route::get('/{id}/download', [PayrollPdfController::class, 'download'])
             ->name('payroll.download');
     });
     Route::get('/company', CompanyManagement::class)->name('admin.company');
@@ -53,8 +53,16 @@ Route::middleware(['admin.auth', 'company.setup'])->prefix('admin')->group(funct
 });
 
 Route::prefix('employees/{company}')->group(function () {
-    Route::get('/login', [EmployeeAuthController::class, 'login'])->name('employee.login');
-    Route::post('/login', [EmployeeAuthController::class, 'handleLogin']);
-    Route::delete('/logout', [EmployeeAuthController::class, 'handleLogout']);
-    Route::get('/dashboard', EmployeeDashboard::class)->name('employee.dashboard');
+    Route::middleware('employee.redirect')->group(function () {
+        Route::get('/login', [EmployeeAuthController::class, 'login'])->name('employee.login');
+        Route::post('/login', [EmployeeAuthController::class, 'handleLogin']);
+        Route::delete('/logout', [EmployeeAuthController::class, 'handleLogout']);
+    });
+    Route::middleware('employee.auth')->group(function () {
+        Route::get('/dashboard', EmployeeDashboard::class)->name('employee.dashboard');
+        Route::prefix('payrolls')->group(function () {
+            Route::get('/{id}/download', [PayrollPdfController::class, 'download'])
+                ->name('employee.payroll');
+        });
+    });
 });

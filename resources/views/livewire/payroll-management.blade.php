@@ -7,7 +7,8 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Total Disbursed</p>
-                <span class="text-2xl font-bold text-primary">Rp{{ number_format($totalDisbursed, decimal_separator: ',', thousands_separator: '.') }}</span>
+                <span
+                    class="text-2xl font-bold text-primary">Rp{{ number_format($totalDisbursed, decimal_separator: ',', thousands_separator: '.') }}</span>
             </div>
         </div>
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center space-x-4">
@@ -25,7 +26,8 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Period</p>
-                <span class="text-lg font-bold text-primary">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
+                <span
+                    class="text-lg font-bold text-primary">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
             </div>
         </div>
     </div>
@@ -101,14 +103,17 @@
                             Rp{{ number_format($payroll->base_salary, 2, decimal_separator: ',', thousands_separator: '.') }}
                         </td>
                         <td class="p-4 whitespace-nowrap text-xs">
-                            <div class="text-green-600">+ Rp{{ number_format($payroll->allowance, 2, decimal_separator: ',', thousands_separator: '.') }}</div>
-                            <div class="text-red-500">- Rp{{ number_format($payroll->cut, 2, decimal_separator: ',', thousands_separator: '.') }}</div>
+                            <div class="text-green-600">+
+                                Rp{{ number_format($payroll->allowance, 2, decimal_separator: ',', thousands_separator: '.') }}</div>
+                            <div class="text-red-500">-
+                                Rp{{ number_format($payroll->cut, 2, decimal_separator: ',', thousands_separator: '.') }}</div>
                         </td>
                         <td class="p-4 whitespace-nowrap text-sm text-red-500">
                             Rp{{ number_format($payroll->absence_deduction, 2, decimal_separator: ',', thousands_separator: '.') }}
                         </td>
                         <td class="p-4 whitespace-nowrap">
-                            <span class="px-2 py-1 rounded-md bg-green-50 text-green-700 text-sm font-bold border border-green-100">
+                            <span
+                                class="px-2 py-1 rounded-md bg-green-50 text-green-700 text-sm font-bold border border-green-100">
                                 Rp{{ number_format($payroll->calculateNetSalary(), 2, decimal_separator: ',', thousands_separator: '.') }}
                             </span>
                         </td>
@@ -119,10 +124,12 @@
                                    title="Download PDF">
                                     <span class="material-icons">picture_as_pdf</span>
                                 </a>
-                                <button wire:click="editPayroll({{ $payroll->id }})" class="text-gray-400 hover:text-primary cursor-pointer">
+                                <button wire:click="editPayroll({{ $payroll->id }})"
+                                        class="text-gray-400 hover:text-primary cursor-pointer">
                                     <span class="material-icons">edit_square</span>
                                 </button>
-                                <button wire:click="toggleDeleteModal({{ $payroll->id }})" class="text-gray-400 hover:text-red-500 cursor-pointerf">
+                                <button wire:click="toggleDeleteModal({{ $payroll->id }})"
+                                        class="text-gray-400 hover:text-red-500 cursor-pointerf">
                                     <span class="material-icons">delete</span>
                                 </button>
                             </div>
@@ -142,7 +149,8 @@
     </div>
 
     {{--  Manual Form  --}}
-    <section class="h-screen w-full md:w-1/3 {{ $isFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
+    <section
+        class="h-screen w-full md:w-1/3 {{ $isFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
         <div class="p-6 border-b border-gray-200 flex justify-between items-center">
             <h2 class="text-xl font-bold text-primary">
                 {{ $payrollToEditId ? 'Edit Transaction' : 'Record Payment' }}
@@ -166,7 +174,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1 ml-1">Selecting an employee autofills data if defined in Salary.</p>
+                    <p class="text-xs text-gray-400 mt-1 ml-1">Selecting an employee autofills data if defined in
+                        Salary.</p>
                     @error('employee_id')
                     <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
                     @enderror
@@ -203,7 +212,8 @@
                     <label for="base_salary" class="input-label">Base Salary Paid</label>
                     <div class="relative mt-1 rounded-md shadow-sm">
                         <span class="material-icons text-xl text-primary input-icon">money</span>
-                        <input wire:model="base_salary" id="base_salary" type="number" step="0.01" class="input-field" placeholder="0.00">
+                        <input wire:model="base_salary" id="base_salary" type="number" step="0.01" class="input-field"
+                               placeholder="0.00">
                     </div>
                     @error('base_salary')
                     <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
@@ -216,10 +226,12 @@
                         <label for="allowance" class="input-label">Allowance</label>
                         <div class="relative mt-1 rounded-md shadow-sm">
                             <span class="material-icons text-xl text-primary input-icon">add_circle</span>
-                            <input wire:model="allowance" id="allowance" type="number" step="0.01" class="input-field" placeholder="0.00">
+                            <input wire:model="allowance" id="allowance" type="number" step="0.01" class="input-field"
+                                   placeholder="0.00">
                         </div>
                         @error('allowance')
-                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}
+                        </p>
                         @enderror
                     </div>
 
@@ -228,10 +240,12 @@
                         <label for="cut" class="input-label">Deduction</label>
                         <div class="relative mt-1 rounded-md shadow-sm">
                             <span class="material-icons text-xl text-primary input-icon">remove_circle</span>
-                            <input wire:model="cut" id="cut" type="number" step="0.01" class="input-field" placeholder="0.00">
+                            <input wire:model="cut" id="cut" type="number" step="0.01" class="input-field"
+                                   placeholder="0.00">
                         </div>
                         @error('cut')
-                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}
+                        </p>
                         @enderror
                     </div>
                 </div>
@@ -256,7 +270,9 @@
                 <p class="text-gray-600 text-sm mb-6">Are you sure you want to remove this payment record?</p>
                 <div class="flex gap-3 justify-end">
                     <button wire:click="toggleDeleteModal" class="button-secondary">Cancel</button>
-                    <button wire:click="deletePayroll" class="button-danger border-gray-200 border-2 shadow-md">Confirm</button>
+                    <button wire:click="deletePayroll" class="button-danger border-gray-200 border-2 shadow-md">
+                        Confirm
+                    </button>
                 </div>
             </div>
         </section>
@@ -269,7 +285,8 @@
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     {{-- modal header --}}
                     <div class="sm:flex sm:items-center">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tertiary sm:mx-0 sm:h-10 sm:w-10">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tertiary sm:mx-0 sm:h-10 sm:w-10">
                             <span class="material-icons text-primary">autorenew</span>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
@@ -281,7 +298,8 @@
                     {{-- modal body --}}
                     <div class="mt-2">
                         <p class="text-sm text-gray-500">
-                            Period: <span class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
+                            Period: <span
+                                class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
                         </p>
 
                         @if($pendingCount > 0)
@@ -292,7 +310,8 @@
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm text-primary">
-                                            There are <span class="font-bold">{{ $pendingCount }} employees </span> have not paid for the selected period.
+                                            There are <span class="font-bold">{{ $pendingCount }} employees </span> have
+                                            not paid for the selected period.
                                         </p>
                                     </div>
                                 </div>
@@ -308,7 +327,8 @@
                                     </li>
                                 @endforeach
                                 @if($pendingCount > 5)
-                                    <li class="list-none text-xs italic mt-1">...dan {{ $pendingCount - 5 }} lainnya.</li>
+                                    <li class="list-none text-xs italic mt-1">...dan {{ $pendingCount - 5 }}lainnya.
+                                    </li>
                                 @endif
                             </ul>
                         @else
@@ -322,7 +342,8 @@
                 </div>
                 <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-4">
                     @if($pendingCount > 0)
-                        <button wire:click="runPayrollNow" wire:loading.attr="disabled" type="button" class="button-primary">
+                        <button wire:click="runPayrollNow" wire:loading.attr="disabled" type="button"
+                                class="button-primary">
                             <span wire:loading.remove wire:target="runPayrollNow">Process Payments</span>
                             <span wire:loading wire:target="runPayrollNow">Processing...</span>
                         </button>
@@ -342,7 +363,8 @@
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     {{-- modal header --}}
                     <div class="sm:flex sm:items-center">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tertiary sm:mx-0 sm:h-10 sm:w-10">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tertiary sm:mx-0 sm:h-10 sm:w-10">
                             <span class="material-icons text-primary">close</span>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
@@ -353,10 +375,12 @@
                     </div>
                     <div class="mt-2">
                         <p class="text-sm text-gray-500">
-                            Period: <span class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
+                            Period: <span
+                                class="font-bold text-gray-700">{{ \Carbon\Carbon::parse($filterPeriod)->format('F Y') }}</span>
                         </p>
                         <p>The selected period has not been completed yet.</p>
                     </div>
+                </div>
                 <div class="sm:flex sm:flex-row-reverse gap-4 pt-3">
                     <button wire:click="$set('isRejectModalOpen', false)" type="button" class="button-primary">
                         Close
@@ -367,67 +391,70 @@
     @endif
 
     {{--  Setup Automation Modal  --}}
-    <section class="h-screen w-full md:w-1/3 {{ $isSetupFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
-            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-bold text-primary">
-                    Setup Payroll Automation
-                </h2>
-                <button wire:click="toggleSetupForm" class="text-gray-500 cursor-pointer hover:text-red-500">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
+    <section
+        class="h-screen w-full md:w-1/3 {{ $isSetupFormOpen ? 'translate-x-0' : 'translate-x-[100%]' }} transition-all duration-300 ease-out fixed right-0 top-0 z-20 bg-surface-high shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-primary">
+                Setup Payroll Automation
+            </h2>
+            <button wire:click="toggleSetupForm" class="text-gray-500 cursor-pointer hover:text-red-500">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
 
-            <div class="p-6 overflow-y-auto flex-1">
-                <form wire:submit.prevent="saveAutomation" class="flex flex-col gap-5">
-                    <!-- Automation Status -->
-                    <div class="input-group">
-                        <label for="auto_is_active" class="input-label">Automation Status</label>
-                        <div class="relative mt-1 rounded-md shadow-sm">
-                            <span class="material-icons text-xl text-primary input-icon">toggle_on</span>
-                            <select wire:model="auto_is_active" id="auto_is_active" class="input-select">
-                                <option value="0">Inactive (Manual Run Only)</option>
-                                <option value="1">Active (Auto-Run)</option>
-                            </select>
-                        </div>
-                        @error('auto_is_active')
-                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
-                        @enderror
+        <div class="p-6 overflow-y-auto flex-1">
+            <form wire:submit.prevent="saveAutomation" class="flex flex-col gap-5">
+                <!-- Automation Status -->
+                <div class="input-group">
+                    <label for="auto_is_active" class="input-label">Automation Status</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">toggle_on</span>
+                        <select wire:model="auto_is_active" id="auto_is_active" class="input-select">
+                            <option value="0">Inactive (Manual Run Only)</option>
+                            <option value="1">Active (Auto-Run)</option>
+                        </select>
                     </div>
+                    @error('auto_is_active')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
 
-                    <!-- Run Date -->
-                    <div class="input-group">
-                        <label for="auto_run_date" class="input-label">Monthly Run Date</label>
-                        <div class="relative mt-1 rounded-md shadow-sm">
-                            <span class="material-icons text-xl text-primary input-icon">event</span>
-                            <input wire:model="auto_run_date" id="auto_run_date" type="number" min="1" max="28" class="input-field" placeholder="e.g. 25">
-                        </div>
-                        <p class="text-xs text-gray-400 mt-1 ml-1">System will automatically generate payrolls on this date every month.</p>
-                        @error('auto_run_date')
-                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
-                        @enderror
+                <!-- Run Date -->
+                <div class="input-group">
+                    <label for="auto_run_date" class="input-label">Monthly Run Date</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">event</span>
+                        <input wire:model="auto_run_date" id="auto_run_date" type="number" min="1" max="28"
+                               class="input-field" placeholder="e.g. 25">
                     </div>
+                    <p class="text-xs text-gray-400 mt-1 ml-1">System will automatically generate payrolls on this date
+                        every month.</p>
+                    @error('auto_run_date')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
 
-                    <!-- Run Time -->
-                    <div class="input-group">
-                        <label for="auto_run_time" class="input-label">Execution Time</label>
-                        <div class="relative mt-1 rounded-md shadow-sm">
-                            <span class="material-icons text-xl text-primary input-icon">schedule</span>
-                            <input wire:model="auto_run_time" id="auto_run_time" type="time" class="input-field">
-                        </div>
-                        @error('auto_run_time')
-                        <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
-                        @enderror
+                <!-- Run Time -->
+                <div class="input-group">
+                    <label for="auto_run_time" class="input-label">Execution Time</label>
+                    <div class="relative mt-1 rounded-md shadow-sm">
+                        <span class="material-icons text-xl text-primary input-icon">schedule</span>
+                        <input wire:model="auto_run_time" id="auto_run_time" type="time" class="input-field">
                     </div>
+                    @error('auto_run_time')
+                    <p class="mt-2.5 text-sm text-red-500"><span class="font-medium">Error:</span> {{ $message }}</p>
+                    @enderror
+                </div>
 
-                    <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 mt-auto">
-                        <button wire:click="toggleSetupForm" type="button" class="button-secondary">
-                            Cancel
-                        </button>
-                        <button type="submit" class="button-primary">
-                            Save Settings
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200 mt-auto">
+                    <button wire:click="toggleSetupForm" type="button" class="button-secondary">
+                        Cancel
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Save Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
 </main>

@@ -5,17 +5,23 @@ namespace App\Livewire;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Leave;
+use App\Models\Payroll;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 class EmployeeDashboard extends Component
 {
+    use WithPagination;
     // State
     public bool $isLeaveFormOpen = false;
+    public bool $isPayslipListOpen = false;
+    public bool $isDetailLeaveOpen = false;
+    public $selectedLeave;
     public string $currentTime = '';
 
     public bool $isMenuOpened = false;
@@ -50,9 +56,22 @@ class EmployeeDashboard extends Component
         }
     }
 
+    public function togglePayslipList(): void
+    {
+        $this->isPayslipListOpen = !$this->isPayslipListOpen;
+    }
+
     public function toggleMenu(): void
     {
         $this->isMenuOpened = !$this->isMenuOpened;
+    }
+
+    public function showLeaveDetail($leaveId)
+    {
+        $this->selectedLeave = Leave::find($leaveId);
+        if ($this->selectedLeave) {
+            $this->isDetailLeaveOpen = true;
+        }
     }
 
     public function recordAttendance(): void
@@ -124,15 +143,18 @@ class EmployeeDashboard extends Component
         }
 
         $recentActivity = Attendance::query()->where('employee_id', $employeeId)
+            ->whereNotNull('check_in_at')
+            ->whereNotNull('check_out_at')
             ->latest('date')
-            ->take(5)
-            ->get()
-            ->map(function ($item) {
+            ->paginate(5)
+            ->through(function ($item) {
                 $item->type = 'attendance';
                 return $item;
             });
+        $leaveRequest = Leave::query()->where('employee_id', $employeeId)->paginate(5);
 
-        $leaveRequest = Leave::query()->where('employee_id', $employeeId)->get();
+        $payslips = Payroll::query()->where('employee_id', $employeeId)
+            ->paginate(5);
 
         return view('livewire.employee-dashboard', [
             'attendanceState' => $attendanceState,
@@ -140,6 +162,7 @@ class EmployeeDashboard extends Component
             'checkOutTime' => $todayRecord->check_out_at ?? null,
             'recentActivity' => $recentActivity,
             'leaveRequest' => $leaveRequest,
+            'payslips' => $payslips,
         ]);
     }
 }

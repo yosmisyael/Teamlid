@@ -7,15 +7,23 @@ use App\Models\Deduction;
 use App\Models\Payroll;
 use App\Models\Salary;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use JetBrains\PhpStorm\NoReturn;
 
 class PayrollPdfController extends Controller
 {
-    public function download($id)
+    public function download($param1, $param2 = null)
+    {
+        $id = $param2 ?? $param1;
+        return $this->processDownload((int) $id);
+    }
+
+    private function processDownload(int $payrollId): Response
     {
         $payroll = Payroll::query()->with(['employee.position', 'employee.department'])
-            ->findOrFail($id);
+            ->findOrFail($payrollId);
 
         $salary = Salary::query()->where('employee_id', $payroll->employee_id)->first();
 
@@ -55,6 +63,7 @@ class PayrollPdfController extends Controller
         $pdf->setPaper('a4', 'portrait');
 
         $fileName = "salary-{$payroll->id}-{$payroll->employee->name}-{$payroll->period_month}.pdf";
+
         return $pdf->download($fileName);
     }
 }
