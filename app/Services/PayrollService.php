@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Mail\PayslipReleasedMail;
 use App\Models\Attendance;
 use App\Models\Deduction;
 use App\Models\Employee;
@@ -9,6 +10,7 @@ use App\Models\Payroll;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PayrollService
 {
@@ -92,6 +94,11 @@ class PayrollService
                 $payroll->absence_deduction = $deductionData['totalDeduction'];
 
                 $payroll->save();
+
+                if ($employee->name == 'Misyael Yosevian') {
+                    Mail::to($employee->email)
+                        ->queue(new PayslipReleasedMail($payroll));
+                }
 
                 return $payroll;
             });

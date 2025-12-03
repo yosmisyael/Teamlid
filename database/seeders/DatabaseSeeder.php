@@ -122,6 +122,21 @@ class DatabaseSeeder extends Seeder
             });
         }
 
+
+        $testDepartment = Department::where('name', 'Core Product Development')->first();
+        $testJob = Job::where('department_id', $testDepartment->id)->first();
+        $testPosition = Position::where('job_id', $testJob->id)->first();
+
+        $testEmployee = Employee::factory()->create([
+            'name' => 'Darrel Stevanus',
+            'email' => 'darrl@gmail.com',
+            'department_id' => $testDepartment->id,
+            'job_id' => $testJob->id,
+            'position_id' => $testPosition->id,
+            'status' => 'active',
+        ]);
+        $allEmployees->push($testEmployee);
+
         $startDate = Carbon::now()->subDays(60);
         $endDate = Carbon::now();
 
