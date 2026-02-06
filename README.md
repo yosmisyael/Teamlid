@@ -1,18 +1,20 @@
 <h1 align="center" id="title">Teamable</h1>
 
-<p align="center"><img src="https://socialify.git.ci/yosmisyael/teamable/image?custom_description=A+Modern%2C+Open-Source+Human+Capital+Management+Solution+for+Everyone.&amp;description=1&amp;font=Inter&amp;name=1&amp;owner=1&amp;pattern=Formal+Invitation&amp;theme=Auto" alt="project-image"></p>
+<p align="center">
+    <img src="https://socialify.git.ci/yosmisyael/Teamlid/image?custom_description=A+Modern+Open-Source+Human+Capital+Management+Solution+for+Everyone.&description=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fyosmisyael%2FTeamlid%2F492ff6c182110b5d7ba83585c657388cb7dad17e%2Fpublic%2Flogo.svg&name=1&owner=1&theme=Light" alt="project-description" >
+</p>
 
 <p id="description">A Modern Open-Source Human Capital Management Solution for Everyone.</p>
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://github.com/yosmisyael/teamable/blob/main/docs/docs-home.jpg?raw=true" alt="project-screenshot" width="400" height="200/">
+<img src="https://raw.githubusercontent.com/yosmisyael/Teamlid/refs/heads/main/docs/page_teamlid_home.png" alt="project-screenshot" width="412.75" height="230.75">
 
-<img src="https://github.com/yosmisyael/teamable/blob/main/docs/docs-admin-1.jpg?raw=true" alt="project-screenshot" width="400" height="200/">
+<img src="https://github.com/yosmisyael/Teamlid/blob/main/docs/page_teamlid_company_profile.png?raw=true" width="412.75" height="230.75">
 
-<img src="https://github.com/yosmisyael/teamable/blob/main/docs/docs-admin-2.jpg?raw=true" alt="project-screenshot" width="400" height="200/">
+<img src="https://github.com/yosmisyael/Teamlid/blob/main/docs/page_teamlid_overview.png?raw=true" alt="project-screenshot" width="412.75" height="230.75">
 
-  
+<img src="https://github.com/yosmisyael/Teamlid/blob/main/docs/page_teamlid_company_profile.png?raw=true" alt="project-screenshot" width="412.75" height="230.75">
   
 <h2>Features</h2>
 
